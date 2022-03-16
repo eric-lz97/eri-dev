@@ -1,0 +1,217 @@
+<!DOCTYPE html><html lang="en-US">
+<!-- Mirrored from bholmes.dev/blog/conference-talks-that-changed-my-perspective-as-a-web-dev/ by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 16 Mar 2022 05:56:24 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+<head><link rel="stylesheet" href="__styles.html"><link rel="stylesheet" href=../../_layouts/__styles.css><link rel="stylesheet" href=../../_layouts/blog-post/__styles.css><title>4 Conference talks that changed my perspective as a web dev</title><link rel="preload" href="https://use.typekit.net/liz3dnm.css" as="style"/><link rel="preload" href="../../assets/fonts/Atkinson/Atkinson-Hyperlegible-Regular.woff2" as="font" crossorigin="anonymous"/><link rel="preload" href="../../assets/fonts/Atkinson/Atkinson-Hyperlegible-Bold.woff2" as="font" crossorigin="anonymous"/><link rel="preload" href="../../assets/fonts/Atkinson/Atkinson-Hyperlegible-Italic.woff2" as="font" crossorigin="anonymous"/><link rel="preload" href="../../assets/fonts/Atkinson/Atkinson-Hyperlegible-BoldItalic.woff2" as="font" crossorigin="anonymous"/><link rel="stylesheet" href="https://use.typekit.net/liz3dnm.css"/><link rel="icon" type="img/jpg" href="../../assets/favicon.jpg"/><link rel="canonical" href="index.html"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><!-- TODO: automatically generate these at buildtime--><link rel="modulepreload" href="__client.html"/><link rel="modulepreload" href="__data.html"/><link rel="modulepreload" href="../../_layouts/__client.mjs"/><link rel="modulepreload" href="../../_layouts/__data.mjs"/><link rel="preload" as="fetch" href="../../index-2.html"/><link rel="preload" as="fetch" href="../../work/index.html"/><link rel="preload" as="fetch" href="../../contact/index.html"/><meta name="author" content="Ben Holmes"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:site" content="@bholmesdev"/><meta name="twitter:creator" content="@bholmesdev"/><meta name="description" content="Let's explore architecture complexity, when abstractions are bad, how React Hooks work, and the importance of SvelteJS"/><meta property="og:url" content="index.html"/><meta property="og:image" content="https://dev-to-uploads.s3.amazonaws.com/i/tiratfjm1965aff32k0g.png"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:site_name" content="Ben Holmes"/><meta property="og:title" content="4 Conference talks that changed my perspective as a web dev"/><meta property="og:description" content="Let's explore architecture complexity, when abstractions are bad, how React Hooks work, and the importance of SvelteJS"/><!-- Analytics--><script async="async" defer="defer" data-domain="bholmes.dev" src="https://stats.bholmes.dev/js/index.js"></script></head><body><div id="loading-spinner" aria-label="loading"><div class="loading-spinner__graphic"><div class="loading-spinner__graphic--dash"></div><div class="loading-spinner__graphic--dash"></div><div class="loading-spinner__graphic--dash"></div></div></div><nav id="site-navigation"><div class="jump-to-section__container"><button id="jump-to-section__toggle" aria-label="Reveal table of contents"><span>0</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M128 192l128 128 128-128z"/></svg></button><div class="jump-to-section__label-container"><p id="jump-to-section__label"></p></div><ul id="jump-to-section__links"></ul></div><div class="primary-nav__container"><ul id="primary-nav__links"><li><a href="../../index.html">Ben</a></li><li><a class="active" href="../index.html">Blog</a></li><li><a href="../../work/index-2.html">Works</a></li><li><a href="../../contact/index-2.html">Contact</a></li></ul><button id="primary-nav__toggle" aria-label="Reveal navigation links"><div class="stripe-top"></div><div class="stripe-middle"></div><div class="stripe-bottom"></div></button></div></nav><div id="loading-spinner" aria-label="loading"><div class="loading-spinner__graphic"><div class="loading-spinner__graphic--dash"></div><div class="loading-spinner__graphic--dash"></div><div class="loading-spinner__graphic--dash"></div></div></div><div data-page="_layouts/blog-post"><main><article data-page="blog/conference-talks-that-changed-my-perspective-as-a-web-dev"><header><picture><source type="image/webp" srcset="/assets/pug-images/79479746-600.webp 600w, /assets/pug-images/79479746-800.webp 800w, /assets/pug-images/79479746-1400.webp 1400w" sizes="(min-width: 800px) 720px, 100vw"><source type="image/jpeg" srcset="/assets/pug-images/79479746-600.jpeg 600w, /assets/pug-images/79479746-800.jpeg 800w, /assets/pug-images/79479746-1400.jpeg 1400w" sizes="(min-width: 800px) 720px, 100vw"><img alt="Let's explore architecture complexity, when abstractions are bad, how React Hooks work, and the importance of SvelteJS" loading="lazy" decoding="async" widths="800,1000,1400" src="../../assets/pug-images/79479746-600.jpg" width="1400" height="589"></picture><h1>4 Conference talks that changed my perspective as a web dev</h1><p class="details"><span><strong>8</strong> minute read</span><span class="spacer">•</span><span>Last updated <time pubdate="pubdate" datetime="2021-02-10T21:44:22.056Z">February 10, 2021</time></span></p></header><div><p>I've resolved to make 2021 my biggest year of learning yet. My blogging game has been pretty sporadic up until now... but I've finally decided to go all-in on the <a href="https://www.swyx.io/learn-in-public/" target="_blank" rel="noreferrer">learning in public mantra</a> with 1 post a week!</p>
+<p>I used to believe blog posts had to be shining nuggets of wisdom only I could find. But with all the notes I take on a weekly basis, why not share my journal with the world too? 😁</p>
+<p>So, here's some of the most impactful conference talks I've found in the last year or so. I hope to check-in with more entries in the future, and I'd love to <strong>hear your own favorite talks</strong> in the comments!</p>
+<h2 id="link-rich-hickey-simple-made-easy">Rich Hickey - Simple Made Easy 🧶</h2>
+<p><a href="https://www.infoq.com/presentations/Simple-Made-Easy/" target="_blank" rel="noreferrer"><strong>🎥 View the talk + transcript here</strong></a></p>
+<p>If you've ever heard the someone say that something is &quot;easy, but not simple,&quot; this is probably the talk they're referencing. This is an easy recommend to programmers in general (not just web devs). That said, I think this talk is <em>especially</em> relevant to frontend-ers nowadays with all the tools at our disposal.</p>
+<p>It feels like web frameworks and &quot;best practices&quot; are moving towards some powerful new opinions:</p>
+<ol>
+<li><strong>Everything is a component</strong></li>
+<li><strong>Functional programming is king</strong></li>
+<li><strong>State management is complex</strong> and deserves a rethink (<a href="https://www.youtube.com/watch?v=hiT4Q1ntvzg" target="_blank" rel="noreferrer">hello state machines</a> 👋)</li>
+</ol>
+<p>☝️ These are the points Rich was getting at with this talk <em>a decade ago!</em> This is why I've resisted this talk multiple times throughout my web dev journey. As a junior getting comfortable with enterprise-grade React apps, it's helped me understand the <em>why</em> behind my team's architectural decisions.</p>
+<h3 id="link-personal-notes">Personal notes</h3>
+<ul>
+<li>
+<p><strong>Simple</strong> is an objective measure, no matter the person, reflecting how many <strong>interwoven pieces</strong> (complexity) there are in a given system</p>
+</li>
+<li>
+<p><strong>Easy</strong> is relative to every individual, reflecting how &quot;familiar&quot; or &quot;near at hand&quot; something feels</p>
+</li>
+<li>
+<p>Agile programming encourages us to move fast without taking a step back</p>
+<ul>
+<li>Complexity and tech debt pile up when we ignore signs of bad abstraction</li>
+<li>Favorite quote of the talk: <em>&quot;But programmers fire the starting pistol every 100 yards and call it a (new) sprint!&quot;</em></li>
+</ul>
+</li>
+<li>
+<p>Replace <strong>complecting</strong> (knotted-up code with lots of interdependent pieces) with <strong>composing</strong> (modularity a la modern frontend frameworks)</p>
+<ul>
+<li>Think building a castle from Legos instead of a &quot;knitted castle&quot; from interweaving</li>
+<li>Separate horizontally, stratify vertically</li>
+</ul>
+</li>
+<li>
+<p>Concrete improvements to make</p>
+<ul>
+<li><strong>&quot;Stateful&quot; variables complect <em>values</em> with <em>change overtime</em></strong>; make transition from one state to another predictable (see <a href="https://www.youtube.com/watch?v=hiT4Q1ntvzg" target="_blank" rel="noreferrer">state machines</a></li>
+<li><strong>Stay close to what the system does;</strong> consider the <em>behavior</em> over <em>implementation details</em>
+<ul>
+<li>Example: <a href="https://www.freecodecamp.org/news/imperative-vs-declarative-programming-difference/" target="_blank" rel="noreferrer">Declarative over imperative programming</a></li>
+<li>Example: test-driven-development done right (<a href="https://www.youtube.com/watch?v=EZ05e7EMOLM" target="_blank" rel="noreferrer">incredible talk by Ian Cooper here</a>)</li>
+</ul>
+</li>
+<li><strong>Work with <em>rules</em> over conditional / switch case spaghetti</strong>
+<ul>
+<li>Given some data X, here's some rules to make it become Y</li>
+<li>Lean on <a href="https://www.freecodecamp.org/news/what-is-a-pure-function-in-javascript-acb887375dfe/" target="_blank" rel="noreferrer">pure functions</a>, which give you a consistent output for a given input</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="link-dan-abramov-the-wet-codebase">Dan Abramov - The Wet Codebase 🌊</h2>
+<p><a href="https://www.deconstructconf.com/2019/dan-abramov-the-wet-codebase" target="_blank" rel="noreferrer"><strong>🎥 View the talk + transcript here</strong></a></p>
+<p>Here's another architecture-y talk that also reaches far beyond web development. If you're unfamiliar with <a href="https://overreacted.io/" target="_blank" rel="noreferrer">Dan Abramov</a>, he's one of the most prolific members of the React core team from a teaching standpoint alone. So if you want advice on architecting your web apps, this is your guy 😁</p>
+<p>This talk goes hand-in-hand with <a href="https://kentcdodds.com/blog/aha-programming" target="_blank" rel="noreferrer">Kent C Dodd's post on &quot;AHA programming&quot;</a>. Generally, they're both addressing the biggest pitfall of component-based thinking: copy / paste feels like bad practice, so you abstract <em>every</em> piece of logic to its own little file.</p>
+<p>Sure there's a place for abstraction, but there's <em>also</em> a place for duplication! This talk has a lot of examples and funny quotables to keep things light; definitely worth the watch.</p>
+<h3 id="link-personal-notes-1">Personal notes</h3>
+<ul>
+<li>If left unchecked, abstractions can become <em>Frankenstein</em> code overtime
+<ul>
+<li>An abstraction <em>almost</em> fits are use case, but not quite 👉 we wittle away that round hole to fit our square peg</li>
+<li>When bugs arise for <em>one</em> use case, we introduce fixes affecting <em>tons</em> of other use cases</li>
+</ul>
+</li>
+<li>👍 When abstraction is good
+<ul>
+<li><strong>Makes your code more declarative</strong> / focus on a specific intent (see that Rich Hickey talk above 😉)</li>
+<li><strong>Avoids missed bug fixes</strong> 👉 fix it once, fix everywhere</li>
+</ul>
+</li>
+<li>👎 When abstraction is bad
+<ul>
+<li><strong>Creates coupling</strong> - when it doesn't <em>quite</em> fit, you can create a monster of refactors</li>
+<li><strong>Adds indirection</strong> - creates layers and layers overtime; <em>&quot;We avoid spaghetti code, but we create lasagna code&quot;</em> 🇮🇹</li>
+</ul>
+</li>
+<li>Ways to improve going forward
+<ul>
+<li><strong>Test code that <em>uses</em> an abstraction</strong>, not the abstraction itself
+<ul>
+<li>If you remove that abstraction later, your tests explode!</li>
+<li>Abstractions are just another implementation detail (again, <a href="https://www.youtube.com/watch?v=EZ05e7EMOLM" target="_blank" rel="noreferrer">TDD is king</a>)</li>
+</ul>
+</li>
+<li><strong>Don't commit to abstraction layers until you need them;</strong> <em>&quot;If a girl is into the same obscure bands as you are... that doesn't mean you're meant to be together&quot;</em></li>
+<li><strong>Be ready to remove abstractions later;</strong> Be the one asking <em>&quot;Please inline this abstraction!&quot;</em> in a PR review!</li>
+</ul>
+</li>
+</ul>
+<h2 id="link-rich-harris-rethinking-reactivity">Rich Harris - Rethinking Reactivity ⚛️</h2>
+<iframe width="375" height="300" src="https://www.youtube-nocookie.com/embed/AdNJ3fydeao"
+          title="YouTube video player" frameborder="0" data-embed-type="youtube"
+          allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+<p>In my opinion, this is <strong>the biggest bombshell to drop</strong> since React was first revealed 💣</p>
+<p>A trigger warning is probably in order here: if you're a diehard React follower, this talk questions many practice React holds dear (including the virtual DOM itself!).</p>
+<p>But even if you disagree with Rich's points, this talk is a <em>serious</em> landmark in the web framework canon. It also exposes what &quot;bundlers,&quot; &quot;compilers,&quot; and &quot;reacting to change&quot; all <em>really</em> mean under the hood. If you aren't convert to a Svelte fan after this, you'll at least understand where the web has been, and where it might be heading!</p>
+<h3 id="link-personal-notes-2">Personal notes</h3>
+<ul>
+<li><strong>What is reactive programming?</strong>
+<ul>
+<li>It all started with spreadsheets
+<ul>
+<li>I change a value in one cell, and other cells &quot;react&quot; to those changes with formulas</li>
+<li>Earliest example of <strong>only re-rendering values that change</strong></li>
+</ul>
+</li>
+<li>It's 1) about tracking values and 2) updating <em>dependents</em> on that value</li>
+</ul>
+</li>
+<li><strong>Problem with React's model</strong>
+<ul>
+<li>When state changes in a component, that <em>whole component</em> re-evaluates itself from the top</li>
+<li>Treats your HTML like a black box; apply the change, then diff against the previous chunk</li>
+<li>Really, React doesn't know about your &quot;state values&quot; or how they affect the DOM!</li>
+<li><strong>Bad signs for efficiency:</strong> I shouldn't need <code>useMemo</code>, <code>useCallback</code>, <code>shouldComponentUpdate</code>, etc</li>
+</ul>
+</li>
+<li>Instead of opting <em>out</em> of reevaluating state (a la <code>useMemo</code>), we could opt <em>in</em> by flagging state variables that depend on other state variables
+<ul>
+<li>Much like a spreadsheet; write formulas that flag which variables affect a given value</li>
+<li>Svelte uses a custom <code>$:</code> operator to &quot;flag&quot; state that is computed from <em>other</em> state <a href="https://svelte.dev/tutorial/reactive-declarations" target="_blank" rel="noreferrer">(example here)</a></li>
+</ul>
+</li>
+<li><strong>Svelte is a compiler, not a runtime</strong>
+<ul>
+<li>In other words, a &quot;Svelte&quot; component compiles to JS your browser understand</li>
+<li>No &quot;runtime&quot; (like React's virtual DOM) needs to get imported</li>
+<li>Also means Svelte can <strong>bend the JS language to its will</strong>
+<ul>
+<li>Evan You, creator of VueJS - Svelte is too magical, since it lets you write JavaScript that isn't totally valid</li>
+<li>Rich Harris' response - this opinion is like believing HTML, CSS and JS should live in separate files. CSS-in-JS is weird too, so what's wrong with this?</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Some other cool demos of Svelte
+<ul>
+<li><a href="https://css-tricks.com/what-i-like-about-writing-styles-with-svelte/" target="_blank" rel="noreferrer"><strong>CSS scoping by component</strong></a> just by using a <code>&lt;style&gt;</code> tag</li>
+<li><a href="https://svelte.dev/tutorial/transition" target="_blank" rel="noreferrer"><strong>Transition directives</strong></a> with sensible out-of-the-box options</li>
+</ul>
+</li>
+</ul>
+<h2 id="link-shawn-swyx-wang-getting-closure-on-react-hooks">Shawn &quot;swyx&quot; Wang - Getting Closure on React Hooks 🎣</h2>
+<iframe width="375" height="300" src="https://www.youtube-nocookie.com/embed/KJP1E-Y-xyo"
+          title="YouTube video player" frameborder="0" data-embed-type="youtube"
+          allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+<p>This is a fast-paced and code-heavy talk, so you'll probably want 1x speed on this one.</p>
+<p>That said... this is <em>the most</em> enlightening talk I've seen on React. Period. It's only 30 minutes long, but it gave me holistic understanding on how React hooks, state management, and re-rendering all work together. It also shows some huge use cases for &quot;closure&quot; in JS. If you have a web dev interview coming up, point to this! 😉</p>
+<h3 id="link-personal-notes-3">Personal notes</h3>
+<p>Hard to write a succinct, bulleted list for this one. So, I just annotated the finished product to explain how everything works. Fair warning: it's a <em>lot</em> to take in!</p>
+<p><strong><a href="https://codepen.io/bholmesdev/pen/YzpWGaz?editors=0011" target="_blank" rel="noreferrer">🚀 Functioning codepen to see it in action</a></strong></p>
+<pre class="language-js"><code class="language-js"><span class="token keyword">const</span> React <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token comment">// create an array for all the state variables in our "React app"</span>
+  <span class="token keyword">let</span> stateValues <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token comment">// start our state index at 0. We'll use this</span>
+  <span class="token comment">// to throw state into that array ☝️ everytime someone calls "useState"</span>
+  <span class="token keyword">let</span> index <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  <span class="token keyword">function</span> <span class="token function">useState</span><span class="token punctuation">(</span><span class="token parameter">initValue</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// state should be set to either:</span>
+    <span class="token comment">// 1. the initial value (aka React.useState(initValue))</span>
+    <span class="token comment">// if this is the first time our component rendered</span>
+    <span class="token comment">// 2. the value from the *last* render</span>
+    <span class="token comment">// if we're re-rendering our component (aka stateValues[index])</span>
+    <span class="token keyword">const</span> state <span class="token operator">=</span> stateValues<span class="token punctuation">[</span>index<span class="token punctuation">]</span> <span class="token operator">||</span> initValue<span class="token punctuation">;</span>
+    <span class="token comment">// "freeze" our index to this particular useState call with _index.</span>
+    <span class="token comment">// prevents the index from changing before we try to call setState later!</span>
+    <span class="token keyword">const</span> _index <span class="token operator">=</span> index<span class="token punctuation">;</span>
+    <span class="token keyword">const</span> <span class="token function-variable function">setState</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token parameter">newValue</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">{</span>
+      stateValues<span class="token punctuation">[</span>_index<span class="token punctuation">]</span> <span class="token operator">=</span> newValue<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+    <span class="token comment">// increment index so our next useState call doesn't override the state</span>
+    <span class="token comment">// we just stored above</span>
+    index<span class="token operator">++</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token punctuation">[</span>state<span class="token punctuation">,</span> setState<span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">function</span> <span class="token function">render</span><span class="token punctuation">(</span><span class="token parameter">Component</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// every time we re-render our app,</span>
+    <span class="token comment">// update all our state variables starting from the top</span>
+    index <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> <span class="token constant">C</span> <span class="token operator">=</span> <span class="token function">Component</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">// "render" the component (which calls the useState function)</span>
+    <span class="token constant">C</span><span class="token punctuation">.</span><span class="token function">render</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token constant">C</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token comment">// return all our functions from this foe React "module"</span>
+  <span class="token keyword">return</span> <span class="token punctuation">{</span> useState<span class="token punctuation">,</span> render <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">function</span> <span class="token function">Component</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">const</span> <span class="token punctuation">[</span>count<span class="token punctuation">,</span> setCount<span class="token punctuation">]</span> <span class="token operator">=</span> React<span class="token punctuation">.</span><span class="token function">useState</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">return</span> <span class="token punctuation">{</span>
+    <span class="token comment">// whenever we "render" this component with React.render, </span>
+    <span class="token comment">// just log the value of our state variable</span>
+    <span class="token function-variable function">render</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token punctuation">{</span> count <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token function-variable function">click</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token function">setCount</span><span class="token punctuation">(</span>count <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">let</span> App <span class="token operator">=</span> React<span class="token punctuation">.</span><span class="token function">render</span><span class="token punctuation">(</span>Component<span class="token punctuation">)</span> <span class="token comment">// logs { count: 2 }</span>
+App<span class="token punctuation">.</span><span class="token function">click</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment">// sets the state at stateValues[0] to 3</span>
+App<span class="token punctuation">.</span><span class="token function">click</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment">// sets the state at stateValues[0] to 4</span>
+React<span class="token punctuation">.</span><span class="token function">render</span><span class="token punctuation">(</span>Component<span class="token punctuation">)</span> <span class="token comment">// logs { count: 4 }</span>
+</code></pre>
+</div><hr/><footer><p>Learn a little something? <strong><a href="https://twitter.com/intent/tweet?text=Woah,%20I%20learned%20so%20much%20from%20this!%20%224%20Conference%20talks%20that%20changed%20my%20perspective%20as%20a%20web%20dev%22%20by%20@bholmesdev%20https://bholmes.dev/blog/conference-talks-that-changed-my-perspective-as-a-web-dev/" target="_blank" rel="noreferrer">Share this post</a> on Twitter!</strong></p><section class="about-the-author"><img src="../../assets/images/me.jpg" alt="Hand drawn portrait of Ben Holmes"/><div><address><a rel="author" href="../../index.html">Ben Holmes </a></address>is a web developer + UI designer by trade from Charleston SC. He's been tinkering with JavaScript and CSS since 2014, and has lead a <a href="https://hack4impact.org/dev-bootcamp">full stack bootcamp curriculum</a> used by universities across the country. Now, he's working fulltime at Peloton and teaching the world a bit of web whimsy in his spare time.</div></section></footer></article></main><footer><div class="content"><div class="newsletter"><h2>Woah, there's a newsletter too!</h2><form action="https://tinyletter.com/bholmesdev" method="post" target="_blank"><label for="email">Email</label><input id="email" type="email" name="email" placeholder="10xengineer@genius.club" required="required"/><p class="newsletter__never-spam">Don't worry, I won't spam you</p><button class="cta-link" type="submit">Yes please, more content<svg xmlns="http://www.w3.org/2000/svg" fill="#5f4b32" width="34" height="34" viewBox="0 0 512 512"><path d="M48 270.9l118.9 44.6L181.7 464 256 360l104 104L464 48 48 270.9zm294.9 126L260 313.4 374.9 152 193.6 289.8 124.9 265l291-156.2-73 288.1z"/></svg></svg></button></form></div><div class="socials"><div class="socials__links"><a href="https://dev.to/bholmesdev" target="_blank" rel="noreferrer" aria-label="Ben's DEV.to blog"><svg xmlns="http://www.w3.org/2000/svg" fill="#5f4b32" width="34" height="34" viewBox="0 0 34 34"><path d="M18.119,22.38a1.48,1.48,0,0,0-.881-.33H15.917v7.929h1.321a1.449,1.449,0,0,0,.881-.33,1.172,1.172,0,0,0,.44-.991V23.371a1.172,1.172,0,0,0-.44-.991ZM39.669,9H12.331A3.332,3.332,0,0,0,9,12.324V39.676A3.332,3.332,0,0,0,12.331,43H39.669A3.332,3.332,0,0,0,43,39.676V12.324A3.332,3.332,0,0,0,39.669,9ZM20.7,28.67a3.466,3.466,0,0,1-3.668,3.586H13.508V19.7H17.1a3.462,3.462,0,0,1,3.593,3.586L20.7,28.67Zm7.647-6.731H24.3v2.918h2.471V27.1H24.3v2.918h4.047v2.244H23.626a1.531,1.531,0,0,1-1.569-1.494v-9.5A1.531,1.531,0,0,1,23.55,19.7h4.8v2.237Zm7.86,8.755c-1,2.333-2.794,1.872-3.6,0L29.682,19.7h2.471l2.257,8.631L36.654,19.7h2.471L36.207,30.694Z" transform="translate(-9 -9)"/></svg></a><a href="https://twitter.com/bholmesdev" target="_blank" rel="noreferrer" aria-label="Ben's Twitter"><svg xmlns="http://www.w3.org/2000/svg" fill="#5f4b32" width="34" height="34" viewBox="0 0 34 34"><path d="M55.383,67.4a14.634,14.634,0,0,1-4.157,1.144,7.264,7.264,0,0,0,3.185-4.008,14.384,14.384,0,0,1-4.6,1.757,7.237,7.237,0,0,0-12.524,4.95,7.087,7.087,0,0,0,.187,1.652,20.514,20.514,0,0,1-14.924-7.574A7.253,7.253,0,0,0,24.8,75a7.07,7.07,0,0,1-3.29-.9v.09a7.245,7.245,0,0,0,5.809,7.1,7.287,7.287,0,0,1-1.907.254,6.829,6.829,0,0,1-1.361-.135,7.25,7.25,0,0,0,6.766,5.032,14.513,14.513,0,0,1-8.995,3.1,14.673,14.673,0,0,1-1.727-.1,20.234,20.234,0,0,0,11.081,3.275c13.331,0,20.613-11.043,20.613-20.621,0-.314-.007-.628-.022-.935A14.736,14.736,0,0,0,55.383,67.4Z" transform="translate(-20.1 -64)"/></svg></a><a href="https://github.com/holben888" target="_blank" rel="noreferrer" aria-label="Ben's GitHub"><svg xmlns="http://www.w3.org/2000/svg" fill="#5f4b32" width="34" height="34" viewBox="0 0 34 34"><path d="M10,115.987a18.6,18.6,0,0,0,.434,4.181,12.443,12.443,0,0,0,1.2,3.251,9.207,9.207,0,0,0,1.943,2.429,11.2,11.2,0,0,0,2.56,1.714,15.1,15.1,0,0,0,3.15,1.079,26,26,0,0,0,3.615.583q1.847.167,4.056.167,2.227,0,4.073-.167a26.227,26.227,0,0,0,3.626-.583,15.681,15.681,0,0,0,3.168-1.079,11.191,11.191,0,0,0,2.578-1.714,9.284,9.284,0,0,0,1.964-2.429,12.2,12.2,0,0,0,1.2-3.251A18.6,18.6,0,0,0,44,115.987a10.2,10.2,0,0,0-2.758-7.133,8.923,8.923,0,0,0,.274-.906,12.4,12.4,0,0,0,.232-1.447,8.1,8.1,0,0,0-.083-2.168,11.516,11.516,0,0,0-.708-2.512l-.25-.049a3.352,3.352,0,0,0-.874.024,9.708,9.708,0,0,0-1.412.3,12.073,12.073,0,0,0-2.078.864,24.135,24.135,0,0,0-2.685,1.6,26.284,26.284,0,0,0-6.668-.666,26.208,26.208,0,0,0-6.651.666,22.6,22.6,0,0,0-2.7-1.6,13.381,13.381,0,0,0-2.054-.864,8.05,8.05,0,0,0-1.429-.291,4.676,4.676,0,0,0-.84-.042,1.455,1.455,0,0,0-.274.059,11.462,11.462,0,0,0-.708,2.512,8.1,8.1,0,0,0-.083,2.168,12.664,12.664,0,0,0,.232,1.447,8.922,8.922,0,0,0,.274.906A10.223,10.223,0,0,0,10,115.987Zm4.174,4.174a5.879,5.879,0,0,1,2.179-4.389,4.334,4.334,0,0,1,1.513-.906,6.575,6.575,0,0,1,1.953-.347c.725-.028,1.422-.021,2.085.017s1.485.09,2.46.156,1.818.1,2.526.1,1.551-.031,2.529-.1,1.8-.118,2.46-.156,1.36-.045,2.085-.017a6.687,6.687,0,0,1,1.953.347,4.366,4.366,0,0,1,1.513.906,5.814,5.814,0,0,1,2.179,4.389,8.215,8.215,0,0,1-.357,2.536,6.367,6.367,0,0,1-.912,1.853,4.535,4.535,0,0,1-1.547,1.273,10.782,10.782,0,0,1-1.929.8,13.909,13.909,0,0,1-2.411.441c-.982.1-1.856.17-2.626.191s-1.749.035-2.935.035-2.165-.01-2.935-.035-1.644-.087-2.626-.191a13.648,13.648,0,0,1-2.411-.441,11.153,11.153,0,0,1-1.929-.8,4.535,4.535,0,0,1-1.547-1.273,6.414,6.414,0,0,1-.916-1.853A8.438,8.438,0,0,1,14.174,120.161Zm17.076-.333c0,1.759.951,3.188,2.127,3.188s2.127-1.426,2.127-3.188-.951-3.188-2.127-3.188S31.25,118.066,31.25,119.828Zm-12.75,0c0,1.759.951,3.188,2.127,3.188s2.127-1.426,2.127-3.188-.951-3.188-2.127-3.188S18.5,118.066,18.5,119.828Z" transform="translate(-10 -101.754)"/></svg></a></div><p>Follow along with <strong>Ben</strong> for the fun, for the whimsy, and for the love of building websites ♥ </p></div></div></footer></div></body>
+          <script src="../../__main.mjs" defer></script>
+          
+          
+<!-- Mirrored from bholmes.dev/blog/conference-talks-that-changed-my-perspective-as-a-web-dev/ by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 16 Mar 2022 05:56:28 GMT -->
+</html>

@@ -1,0 +1,357 @@
+<!DOCTYPE html><html lang="en-US">
+<!-- Mirrored from bholmes.dev/blog/query-json-objects-graphql/ by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 16 Mar 2022 05:56:41 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+<head><link rel="stylesheet" href="__styles.html"><link rel="stylesheet" href=../../_layouts/__styles.css><link rel="stylesheet" href=../../_layouts/blog-post/__styles.css><title>Grabbing subsets of JS object properties with... GraphQL?</title><link rel="preload" href="https://use.typekit.net/liz3dnm.css" as="style"/><link rel="preload" href="../../assets/fonts/Atkinson/Atkinson-Hyperlegible-Regular.woff2" as="font" crossorigin="anonymous"/><link rel="preload" href="../../assets/fonts/Atkinson/Atkinson-Hyperlegible-Bold.woff2" as="font" crossorigin="anonymous"/><link rel="preload" href="../../assets/fonts/Atkinson/Atkinson-Hyperlegible-Italic.woff2" as="font" crossorigin="anonymous"/><link rel="preload" href="../../assets/fonts/Atkinson/Atkinson-Hyperlegible-BoldItalic.woff2" as="font" crossorigin="anonymous"/><link rel="stylesheet" href="https://use.typekit.net/liz3dnm.css"/><link rel="icon" type="img/jpg" href="../../assets/favicon.jpg"/><link rel="canonical" href="index.html"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><!-- TODO: automatically generate these at buildtime--><link rel="modulepreload" href="__client.html"/><link rel="modulepreload" href="__data.html"/><link rel="modulepreload" href="../../_layouts/__client.mjs"/><link rel="modulepreload" href="../../_layouts/__data.mjs"/><link rel="preload" as="fetch" href="../../index-2.html"/><link rel="preload" as="fetch" href="../../work/index.html"/><link rel="preload" as="fetch" href="../../contact/index.html"/><meta name="author" content="Ben Holmes"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:site" content="@bholmesdev"/><meta name="twitter:creator" content="@bholmesdev"/><meta name="description" content="It's easy to grab keys out of JSON objects, but what if we want to grab entire, nested sets of object keys without destructuring?"/><meta property="og:url" content="index.html"/><meta property="og:image" content="../../assets/blog/query-json-objects-graphql/thumbnail.png"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:site_name" content="Ben Holmes"/><meta property="og:title" content="Grabbing subsets of JS object properties with... GraphQL?"/><meta property="og:description" content="It's easy to grab keys out of JSON objects, but what if we want to grab entire, nested sets of object keys without destructuring?"/><!-- Analytics--><script async="async" defer="defer" data-domain="bholmes.dev" src="https://stats.bholmes.dev/js/index.js"></script></head><body><div id="loading-spinner" aria-label="loading"><div class="loading-spinner__graphic"><div class="loading-spinner__graphic--dash"></div><div class="loading-spinner__graphic--dash"></div><div class="loading-spinner__graphic--dash"></div></div></div><nav id="site-navigation"><div class="jump-to-section__container"><button id="jump-to-section__toggle" aria-label="Reveal table of contents"><span>0</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M128 192l128 128 128-128z"/></svg></button><div class="jump-to-section__label-container"><p id="jump-to-section__label"></p></div><ul id="jump-to-section__links"></ul></div><div class="primary-nav__container"><ul id="primary-nav__links"><li><a href="../../index.html">Ben</a></li><li><a class="active" href="../index.html">Blog</a></li><li><a href="../../work/index-2.html">Works</a></li><li><a href="../../contact/index-2.html">Contact</a></li></ul><button id="primary-nav__toggle" aria-label="Reveal navigation links"><div class="stripe-top"></div><div class="stripe-middle"></div><div class="stripe-bottom"></div></button></div></nav><div id="loading-spinner" aria-label="loading"><div class="loading-spinner__graphic"><div class="loading-spinner__graphic--dash"></div><div class="loading-spinner__graphic--dash"></div><div class="loading-spinner__graphic--dash"></div></div></div><div data-page="_layouts/blog-post"><main><article data-page="blog/query-json-objects-graphql"><header><picture><source type="image/webp" srcset="/assets/pug-images/8d6d189c-600.webp 600w, /assets/pug-images/8d6d189c-800.webp 800w, /assets/pug-images/8d6d189c-1400.webp 1400w" sizes="(min-width: 800px) 720px, 100vw"><source type="image/jpeg" srcset="/assets/pug-images/8d6d189c-600.jpeg 600w, /assets/pug-images/8d6d189c-800.jpeg 800w, /assets/pug-images/8d6d189c-1400.jpeg 1400w" sizes="(min-width: 800px) 720px, 100vw"><img alt="It's easy to grab keys out of JSON objects, but what if we want to grab entire, nested sets of object keys without destructuring?" loading="lazy" decoding="async" widths="800,1000,1400" src="../../assets/pug-images/8d6d189c-600.jpg" width="1400" height="587"></picture><h1>Grabbing subsets of JS object properties with... GraphQL?</h1><p class="details"><span><strong>9</strong> minute read</span><span class="spacer">•</span><span>Last updated <time pubdate="pubdate" datetime="2021-06-07T20:01:36.550Z">June 7, 2021</time></span></p></header><div><p>This entry comes from my web wizardry newsletter, where I explore universal solutions to common web dev problems (no matter your favorite framework). If you like what you see, <a href="http://tinyletter.com/bholmesdev" target="_blank" rel="noreferrer"><strong>go sign up for free</strong></a> 🪄</p>
+<hr>
+<p>Messing with JavaScript objects is pretty easy these days. Destructuring syntax is convenient and the spread <code>...</code> operator helps with merging objects together. But what about grabbing just... a portion of an object?</p>
+<p>This question deserves some visuals. Let's jump into the problem we're trying to solve, and a flexible solution we can add to any existing JavaScript project 💪</p>
+<h2 id="link-what-we-want">What we want</h2>
+<p>Say I have a big document of structured data. Without manually writing a new object by hand, I just want to pull the little slices that I actually care about.</p>
+<p>Here's one such scenario:</p>
+<p><picture><source type="image/webp" srcset="/assets/md-images/794b47db-600.webp 600w, /assets/md-images/794b47db-1000.webp 1000w, /assets/md-images/794b47db-1400.webp 1400w" sizes="(min-width: 800px) 720px, 100vw"><source type="image/jpeg" srcset="/assets/md-images/794b47db-600.jpeg 600w, /assets/md-images/794b47db-1000.jpeg 1000w, /assets/md-images/794b47db-1400.jpeg 1400w" sizes="(min-width: 800px) 720px, 100vw"><img alt="A side-by-side comparison of 2 JavaScript objects. Under "what we have," there's an object with the keys "weekOldPasta" (with subways noodleSogginess, numMeatballs, and isEdible) and "panSearedSalmon" (with subkeys oilUsed, numSpices, and isEdible). On the right side under "what we want," we see the same object as before, but only using the "isEdible" subkey under weekOldPasta and panSearedSalmon. The other subkeys are grayed out." loading="lazy" decoding="async" src="../../assets/md-images/794b47db-600.jpg" width="1400" height="760"></picture></p>
+<p>In this case, we want a copy of our original fridge, but we only care about those <code>isEdible</code> subkeys.</p>
+<p>My gut reaction is to reach for some declarative tools in my <a href="http://es6-features.org/#Constants" target="_blank" rel="noreferrer">ES6</a> arsenal. <strong>Object destructuring</strong> comes to mind at first:</p>
+<pre class="language-js"><code class="language-js"><span class="token keyword">const</span> whatsInMyFridge <span class="token operator">=</span> <span class="token punctuation">{</span>
+  weekOldPasta<span class="token operator">:</span> <span class="token punctuation">{</span>
+  <span class="token operator">...</span>
+<span class="token punctuation">}</span>
+<span class="token keyword">const</span> <span class="token punctuation">{</span> weekOldPasta<span class="token operator">:</span> <span class="token punctuation">{</span> isEdible<span class="token operator">:</span> pastaIsEdible <span class="token punctuation">}</span><span class="token punctuation">,</span>
+	panSearedSalmon<span class="token operator">:</span> <span class="token punctuation">{</span> isEdible<span class="token operator">:</span> panSearedSalmonIsEdible <span class="token punctuation">}</span>
+	<span class="token punctuation">}</span> <span class="token operator">=</span> whatsInMyFridge
+</code></pre>
+<p>There's a few issues with this:</p>
+<ul>
+<li>We can't easily destructure keys of the same name. Notice I had to convert each <code>isEdible</code> variable to the verbose <code>pastaIsEdible</code> and <code>panSearedSalmonIsEdible</code></li>
+<li>Destructuring leads to some pretty gnarly code as it gets more complex. Just with a few keys, we're already hitting multi-line { curly hell }.</li>
+</ul>
+<p>And most of all, <strong>we still have to build our new object at the end!</strong> Our destructuring statement <em>actually</em> just made some one-off variables for each key in the object. We'll still have to do this:</p>
+<pre class="language-js"><code class="language-js"><span class="token keyword">const</span> whatsEdible <span class="token operator">=</span> <span class="token punctuation">{</span>
+  weekOldPasta<span class="token operator">:</span> <span class="token punctuation">{</span>
+    isEdible<span class="token operator">:</span> pastaIsEdible<span class="token punctuation">,</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  panSearedSalmon<span class="token operator">:</span> <span class="token punctuation">{</span>
+    isEdible<span class="token operator">:</span> panSearedSalmonIsEdible<span class="token punctuation">,</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>...which is hardly better than just writing the object from scratch 😢</p>
+<p>What we really want is some magical syntax for <em>just the keys</em> we want to retrieve. Something like this really:</p>
+<pre class="language-js"><code class="language-js">whatsInMyFridge<span class="token punctuation">.</span><span class="token function">giveMeTheseKeys</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+	weekOldPasta <span class="token punctuation">{</span>
+		isEdible
+	<span class="token punctuation">}</span><span class="token punctuation">,</span>
+	panSearedSalmon <span class="token punctuation">{</span>
+		isEdible
+	<span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span> <span class="token comment">// -> a beautiful formatted JS object</span>
+</code></pre>
+<h2 id="link-enter-graphql">📈 Enter: GraphQL</h2>
+<p>If you've worked with GraphQL before, you probably noticed how close that example comes to a GraphQL query!</p>
+<p>A brief rundown for those unfamiliar: GraphQL is a &quot;querying&quot; language originally built for API calls. It was mainly born from the frustrations with REST requests, as API endpoints had to <em>predict</em> all the data a client might want to retrieve.</p>
+<p><a href="https://docs.github.com/en/graphql/guides/migrating-from-rest-to-graphql" target="_blank" rel="noreferrer">GitHub recently migrated to GraphQL</a> because of this. Imagine this scenario:</p>
+<ul>
+<li>User A wants to get information about their GitHub profile. They want to send off a username and get back the accounts <strong>name</strong> and <strong>profile picture</strong></li>
+<li>User B also wants some GitHub profile info. However, they're looking for a different set of info: the list of <strong>user recovery emails</strong> and their <strong>personal bio</strong>.</li>
+</ul>
+<p>As you could imagine, User C might want a new combination of fields, as might users D-Z. So instead of returning a massive JSON payload to satisfy everyone, GitHub exposed a GraphQL API for you to describe <em>exactly</em> which fields you want.</p>
+<p>Here's how User A might request a name and profile picture as part of their request body
+<em>This is from demo purposes, and won't actually work if you send to GitHub</em></p>
+<pre class="language-gql"><code class="language-gql">{
+	userProfile(email: '10xengineer@genius.club') {
+		name
+		picture {
+			src
+			alt
+		}
+	}
+}
+</code></pre>
+<p>...And GitHub will &quot;fill in the blanks&quot; by providing values to those requested keys. As you can imagine, this syntax is flexible enough to use on <em>any</em> blob of JSON you want to filter down 👀</p>
+<h2 id="link-applying-graphql-to-reading-json-objects">📖 Applying GraphQL to reading JSON objects</h2>
+<p>💡 <strong>TLDR:</strong> If you want the final solution without all the walkthrough, jump down to <a href="#link-the-finished-product" target="_blank" rel="noreferrer">the finished product</a>!</p>
+<p>Let's figure out how to use that fancy syntax for our use case. The biggest question to resolve is &quot;how do we interpret a GraphQL query in JS land?&quot; Sadly, there isn't a nice &quot;plain JS&quot; solution, so we <em>will</em> be reaching for a library here.</p>
+<p>Go ahead and install this <a href="https://www.npmjs.com/package/graphql-query-to-json" target="_blank" rel="noreferrer">graphql-query-to-json package</a>. It <em>does</em> have a fair amount of sub-dependencies like the core <a href="https://www.npmjs.com/package/graphql" target="_blank" rel="noreferrer">graphql package</a> and the complimentary <a href="https://www.npmjs.com/package/json-to-graphql-query" target="_blank" rel="noreferrer">json-to-graphql-query</a>, so if that bothers you... my apologies 😢</p>
+<p>Let's see what we get from our old &quot;what's edible in my fridge&quot; request:</p>
+<pre class="language-js"><code class="language-js"><span class="token keyword">const</span> <span class="token punctuation">{</span> graphQlQueryToJson <span class="token punctuation">}</span> <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">"graphql-query-to-json"</span><span class="token punctuation">)</span>
+<span class="token comment">// or if you prefer: import { graphQlQueryToJson } from 'graphql-query-to-json'</span>
+
+<span class="token keyword">const</span> asJson <span class="token operator">=</span> <span class="token function">graphQlQueryToJson</span><span class="token punctuation">(</span><span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">{
+  weekOldPasta {
+    isEdible
+  }
+  panSearedSalmon {
+    isEdible
+  }
+}</span><span class="token template-punctuation string">`</span></span><span class="token punctuation">)</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>asJson<span class="token punctuation">)</span>
+<span class="token comment">/* 👇
+{
+  query: {
+    weekOldPasta: { isEdible: true },
+    panSearedSalmon: { isEdible: true }
+  }
+}
+*/</span>
+</code></pre>
+<p>Neat! Toss in a string, get back a JS object. You'll notice that it wraps our requested object with the <code>query</code> key. This <em>would</em> be useful if we were sending this request to an API, but for our purposes, we'll just ignore that key in our helper function. It also stubs out any unknown key values with <code>true</code>, which we'll use to track down unfilled values later 👀</p>
+<h3 id="link-traversing-our-query">Traversing our query</h3>
+<p>With this JS object in hand, it's time to walk through all the keys and figure out which values to fill in. Let's start with a simple example that only goes 1 level of keys deep:</p>
+<pre class="language-js"><code class="language-js"><span class="token keyword">const</span> myFridge <span class="token operator">=</span> <span class="token punctuation">{</span>
+	numEggs<span class="token operator">:</span> <span class="token number">5</span><span class="token punctuation">,</span>
+	pintsOfIceCream<span class="token operator">:</span> <span class="token number">3</span><span class="token punctuation">,</span>
+	degreeUnits<span class="token operator">:</span> <span class="token string">'celsius'</span><span class="token punctuation">,</span>
+<span class="token punctuation">}</span>
+<span class="token keyword">const</span> whatIWant <span class="token operator">=</span> <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">{
+	numEggs
+	degreeUnits
+}</span><span class="token template-punctuation string">`</span></span>
+<span class="token comment">// grab the ".query" straight away, since we won't need that nested key</span>
+<span class="token keyword">const</span> whatIWantAsJson <span class="token operator">=</span> <span class="token function">graphQlQueryToJson</span><span class="token punctuation">(</span>whatIWant<span class="token punctuation">)</span><span class="token punctuation">.</span>query
+<span class="token comment">// 👉 { numEggs: true, degreeUnits: true }</span>
+</code></pre>
+<p>Now we have our set of keys (<code>numEggs</code> and <code>degreeUnits</code>) each with a value of <code>true</code>. To assign our actual values in place of those <code>true</code> flags, we can</p>
+<ol>
+<li>loop through all the object keys in <code>whatIWantAsJson</code>, and</li>
+<li>assign values from the same key in <code>myFridge</code>.</li>
+</ol>
+<pre class="language-js"><code class="language-js"><span class="token comment">// loop over the object keys...</span>
+<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">const</span> key <span class="token keyword">of</span> Object<span class="token punctuation">.</span><span class="token function">keys</span><span class="token punctuation">(</span>whatIWantAsJson<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+	<span class="token comment">// and if that key has a value of "true"...</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>whatIWantAsJson<span class="token punctuation">[</span>key<span class="token punctuation">]</span> <span class="token operator">===</span> <span class="token boolean">true</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+		<span class="token comment">// replace "true" with the value from myFridge</span>
+		whatIWantAsJson<span class="token punctuation">[</span>key<span class="token punctuation">]</span> <span class="token operator">=</span> myFridge<span class="token punctuation">[</span>key<span class="token punctuation">]</span>
+	<span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>whatIWantAsJson<span class="token punctuation">)</span>
+<span class="token comment">// 👉 { numEggs: 5, degreeUnits: 'celsius' }</span>
+</code></pre>
+<h3 id="link-handling-nested-objects">Handling nested objects</h3>
+<p>This basic loop handles 1 level of nesting. But what if we have a request like this?</p>
+<pre class="language-js"><code class="language-js"><span class="token punctuation">{</span>
+  <span class="token comment">// level 1</span>
+  weekOldPasta <span class="token punctuation">{</span>
+	<span class="token comment">// level 2</span>
+    isEdible
+  <span class="token punctuation">}</span>
+  <span class="token operator">...</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>For this, we'll need a way to run our loop over <code>Object.keys</code> for <em>every level</em> of keys in our object. Get ready to put on your computer science hat, because we're using <strong>recursion</strong> 😨</p>
+<p>Pay attention to this new <code>else</code> statement we're adding:</p>
+<pre class="language-js"><code class="language-js"><span class="token comment">// wrap our loop in a function we can call</span>
+<span class="token keyword">function</span> <span class="token function">assignValuesToObjectKeys</span><span class="token punctuation">(</span><span class="token parameter">whatIWant<span class="token punctuation">,</span> myFridge</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+	<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">const</span> key <span class="token keyword">of</span> Object<span class="token punctuation">.</span><span class="token function">keys</span><span class="token punctuation">(</span>whatIWant<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+		<span class="token keyword">if</span> <span class="token punctuation">(</span>whatIWant<span class="token punctuation">[</span>key<span class="token punctuation">]</span> <span class="token operator">===</span> <span class="token boolean">true</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+			whatIWant<span class="token punctuation">[</span>key<span class="token punctuation">]</span> <span class="token operator">=</span> myFridge<span class="token punctuation">[</span>key<span class="token punctuation">]</span>
+		<span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+			<span class="token comment">// if the value isn't "true", we must have found a nested object</span>
+			<span class="token comment">// so, we'll call this same function again, now starting from</span>
+			<span class="token comment">// the nested object inside whatIWant</span>
+			<span class="token function">assignValuesToObjectKeys</span><span class="token punctuation">(</span>whatIWant<span class="token punctuation">[</span>key<span class="token punctuation">]</span><span class="token punctuation">,</span> myFridge<span class="token punctuation">[</span>key<span class="token punctuation">]</span><span class="token punctuation">)</span>
+		<span class="token punctuation">}</span>
+	<span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>This is a classic example of a <a href="https://www.freecodecamp.org/news/learn-recursion-in-javascript-by-example/" target="_blank" rel="noreferrer">recursive function</a>. We have 2 clauses here:</p>
+<ul>
+<li><strong>The base case:</strong> When we hit a value of <code>true</code>, we stop looking for nested objects</li>
+<li><strong>The recursive function call:</strong> When we <em>haven't</em> hit the &quot;base&quot; of our nested object, keep drilling down the chain of nested keys using the same function</li>
+</ul>
+<p>With this in place, we have a reusable JS function for anywhere in our codebase 🥳</p>
+<pre class="language-js"><code class="language-js"><span class="token keyword">const</span> myFridge <span class="token operator">=</span> <span class="token punctuation">{</span>  
+	weekOldPasta<span class="token operator">:</span> <span class="token punctuation">{</span>  
+		noodleSogginess<span class="token operator">:</span> “high”<span class="token punctuation">,</span>  
+		numMeatballs<span class="token operator">:</span> <span class="token number">4</span><span class="token punctuation">,</span>  
+		isEdible<span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>  
+	<span class="token punctuation">}</span><span class="token punctuation">,</span>  
+	panSearedSalmon<span class="token operator">:</span> <span class="token punctuation">{</span>  
+		oilUsed<span class="token operator">:</span> “avocado”<span class="token punctuation">,</span>  
+		numSpices<span class="token operator">:</span> <span class="token number">3</span><span class="token punctuation">,</span>  
+		isEdible<span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>  
+	<span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">const</span> whatIWant <span class="token operator">=</span> <span class="token function">graphQlQueryToJson</span><span class="token punctuation">(</span><span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">{
+  weekOldPasta {
+    isEdible
+  }
+  panSearedSalmon {
+    isEdible
+  }
+}</span><span class="token template-punctuation string">`</span></span><span class="token punctuation">)</span><span class="token punctuation">.</span>query
+
+<span class="token function">assignValuesToObjectKeys</span><span class="token punctuation">(</span>whatIWant<span class="token punctuation">,</span> myFridge<span class="token punctuation">)</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>whatIWant<span class="token punctuation">)</span>
+<span class="token comment">/* 👉 {
+	weekOldPasta: {
+		isEdible: false,
+	},
+	panSearedSalmon: {
+		isEdible: true,
+	},
+}
+*/</span>
+</code></pre>
+<h3 id="link-cleaning-this-up-a-little">Cleaning this up a little</h3>
+<p>You'll notice that our <code>assignValuesToObjectKeys</code> function doesn't return anything; it just modifies the <code>whatIWant</code> object we passed in. For added readability, we might add a wrapper function to handle the <code>graphQlQueryToJson</code> call and actually <code>return</code> our requested object:</p>
+<pre class="language-js"><code class="language-js"><span class="token keyword">function</span> <span class="token function">grabPartialObject</span><span class="token punctuation">(</span>originalObject <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">,</span> query <span class="token operator">=</span> <span class="token string">""</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+	<span class="token keyword">const</span> whatIWant <span class="token operator">=</span> <span class="token function">graphQlQueryToJson</span><span class="token punctuation">(</span>query<span class="token punctuation">)</span><span class="token punctuation">.</span>query
+	<span class="token function">assignValuesToObjectKeys</span><span class="token punctuation">(</span>whatIWant<span class="token punctuation">,</span> originalObject<span class="token punctuation">)</span>
+	<span class="token keyword">return</span> whatIWant
+<span class="token punctuation">}</span>
+<span class="token operator">...</span>
+<span class="token keyword">const</span> whatsEdible <span class="token operator">=</span> <span class="token function">grabPartialObject</span><span class="token punctuation">(</span>myFridge<span class="token punctuation">,</span> <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">{
+  weekOldPasta {
+    isEdible
+  }
+  panSearedSalmon {
+    isEdible
+  }
+}</span><span class="token template-punctuation string">`</span></span><span class="token punctuation">)</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>whatsEdible<span class="token punctuation">)</span> <span class="token comment">// gives us the same object as before!</span>
+</code></pre>
+<h3 id="link-handling-arrays">Handling arrays</h3>
+<p>So we've conquered nested objects. But what if we have an <em>array</em> of objects that we want to filter?</p>
+<p>For instance, say our fridge data was structured just a bit differently:</p>
+<pre class="language-js"><code class="language-js"><span class="token keyword">const</span> myFridge <span class="token operator">=</span> <span class="token punctuation">{</span>
+  food<span class="token operator">:</span> <span class="token punctuation">[</span>
+    <span class="token punctuation">{</span>
+      name<span class="token operator">:</span> <span class="token string">'Week old pasta'</span><span class="token punctuation">,</span>
+      noodleSogginess<span class="token operator">:</span> <span class="token string">'high'</span><span class="token punctuation">,</span>
+      numMeatballs<span class="token operator">:</span> <span class="token number">4</span><span class="token punctuation">,</span>
+      isEdible<span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">{</span>
+      name<span class="token operator">:</span> <span class="token string">'Pan Seared Salmon'</span><span class="token punctuation">,</span>
+      oilUsed<span class="token operator">:</span> <span class="token string">'avocado'</span><span class="token punctuation">,</span>
+      numSpices<span class="token operator">:</span> <span class="token number">3</span><span class="token punctuation">,</span>
+      isEdible<span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token punctuation">]</span><span class="token punctuation">,</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>...and we just care about the <code>name</code> and <code>isEdible</code> keys for every object in that array. Following how GraphQL requests normally work, we'd expect this sort of syntax to work:</p>
+<pre class="language-graphql"><code class="language-graphql"><span class="token punctuation">{</span>
+	food <span class="token punctuation">{</span>
+		name
+		isEdible
+	<span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>In other words, treat <code>food</code> like it's a regular object in the request, and we'll be smart enough to handle arrays of data.</p>
+<p>This answer is a bit more involved than our previous examples. So, I'll leave you with a thoroughly commented codeblock:</p>
+<pre class="language-js"><code class="language-js"><span class="token keyword">function</span> <span class="token function">assignValuesToObjectKeys</span><span class="token punctuation">(</span><span class="token parameter">whatIWant<span class="token punctuation">,</span> myFridge</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">const</span> key <span class="token keyword">of</span> Object<span class="token punctuation">.</span><span class="token function">keys</span><span class="token punctuation">(</span>whatIWant<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>whatIWant<span class="token punctuation">[</span>key<span class="token punctuation">]</span> <span class="token operator">===</span> <span class="token boolean">true</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token operator">...</span>
+	  <span class="token comment">// 👇 If the fridge data happens to be an array...</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>Array<span class="token punctuation">.</span><span class="token function">isArray</span><span class="token punctuation">(</span>myFridge<span class="token punctuation">[</span>key<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token comment">// first, keep track of the object they requested</span>
+      <span class="token keyword">const</span> originalRequest <span class="token operator">=</span> whatIWant<span class="token punctuation">[</span>key<span class="token punctuation">]</span>
+      <span class="token comment">// then, create an array where that request used to be</span>
+      <span class="token comment">// for us to "push" new elements onto</span>
+      whatIWant<span class="token punctuation">[</span>key<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+      <span class="token comment">// loop over the items in our array of food...</span>
+      <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">const</span> fridgeItem <span class="token keyword">of</span> myFridge<span class="token punctuation">[</span>key<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment">// make a variable to store the result of assignValuesToObjectKeys</span>
+        <span class="token comment">// we use { ...originalRequest } here to create a "copy"</span>
+        <span class="token keyword">const</span> requestedItem <span class="token operator">=</span> <span class="token punctuation">{</span> <span class="token operator">...</span>originalRequest <span class="token punctuation">}</span>
+        <span class="token comment">// grab the keys we want out of that array element</span>
+        <span class="token function">assignValuesToObjectKeys</span><span class="token punctuation">(</span>requestedItem<span class="token punctuation">,</span> fridgeItem<span class="token punctuation">)</span>
+        <span class="token comment">// then, push our shiny new object onto our running list</span>
+        whatIWant<span class="token punctuation">[</span>key<span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span>requestedItem<span class="token punctuation">)</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+      <span class="token operator">...</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>That's a fair amount of code! To briefly summarize, you'll need to:</p>
+<ol>
+<li>Check when our actual data is an array, rather than a simple object</li>
+<li>Loop over the actual data and <code>assignValuesToObjectKeys</code> for each one</li>
+<li>Push the results onto a running array in <code>whatIWant</code>, with necessary helper variables to keep track of your original request</li>
+</ol>
+<h2 id="link-the-finished-product">🚀 The finished product</h2>
+<p>Here's how our finished product looks! I've renamed <code>myFridge</code> 👉 <code>actualObj</code> and <code>whatIWant</code> 👉 <code>requestedObj</code> so our naming conventions are more universal. I also added a <code>hasOwnProperty</code> check to assert we're requesting a key that actually exists. If not, raise an exception.</p>
+<p>Remember, you'll need to add the <a href="https://www.npmjs.com/package/graphql-query-to-json" target="_blank" rel="noreferrer">graphql-query-to-json package</a> package to your project for this to work.</p>
+<pre class="language-js"><code class="language-js"><span class="token keyword">const</span> <span class="token punctuation">{</span> graphQlQueryToJson <span class="token punctuation">}</span> <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">"graphql-query-to-json"</span><span class="token punctuation">)</span>
+
+<span class="token keyword">function</span> <span class="token function">assignValuesToObjectKeys</span><span class="token punctuation">(</span><span class="token parameter">requestedObj<span class="token punctuation">,</span> actualObj</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">const</span> key <span class="token keyword">of</span> Object<span class="token punctuation">.</span><span class="token function">keys</span><span class="token punctuation">(</span>requestedObj<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+	<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>actualObj<span class="token punctuation">.</span><span class="token function">hasOwnProperty</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+		<span class="token keyword">throw</span> <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">You requested a key that doesn't exist: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>key<span class="token interpolation-punctuation punctuation">}</span></span><span class="token template-punctuation string">`</span></span>
+	<span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>requestedObj<span class="token punctuation">[</span>key<span class="token punctuation">]</span> <span class="token operator">===</span> <span class="token boolean">true</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      requestedObj<span class="token punctuation">[</span>key<span class="token punctuation">]</span> <span class="token operator">=</span> actualObj<span class="token punctuation">[</span>key<span class="token punctuation">]</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>Array<span class="token punctuation">.</span><span class="token function">isArray</span><span class="token punctuation">(</span>actualObj<span class="token punctuation">[</span>key<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token comment">// keep track of the object they requested</span>
+      <span class="token keyword">const</span> originalRequest <span class="token operator">=</span> requestedObj<span class="token punctuation">[</span>key<span class="token punctuation">]</span>
+      <span class="token comment">// then, create an array where that request used to be</span>
+      <span class="token comment">// for us to "push" new elements onto</span>
+      requestedObj<span class="token punctuation">[</span>key<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+      <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">const</span> actualItem <span class="token keyword">of</span> actualObj<span class="token punctuation">[</span>key<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment">// make a variable to store the result of assignValuesToObjectKeys</span>
+        <span class="token comment">// we use { ...originalRequest } here to create a "copy"</span>
+        <span class="token keyword">const</span> requestedItem <span class="token operator">=</span> <span class="token punctuation">{</span> <span class="token operator">...</span>originalRequest <span class="token punctuation">}</span>
+        <span class="token function">assignValuesToObjectKeys</span><span class="token punctuation">(</span>requestedItem<span class="token punctuation">,</span> actualItem<span class="token punctuation">)</span>
+        requestedObj<span class="token punctuation">[</span>key<span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span>requestedItem<span class="token punctuation">)</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+      console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>requestedObj<span class="token punctuation">[</span>key<span class="token punctuation">]</span><span class="token punctuation">)</span>
+      <span class="token comment">// if the value isn't "true", we must have found a nested object</span>
+      <span class="token comment">// so, we'll call this same function again, now starting from</span>
+      <span class="token comment">// the nested object inside requestedObj</span>
+      <span class="token function">assignValuesToObjectKeys</span><span class="token punctuation">(</span>requestedObj<span class="token punctuation">[</span>key<span class="token punctuation">]</span><span class="token punctuation">,</span> actualObj<span class="token punctuation">[</span>key<span class="token punctuation">]</span><span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// 👇 Function you'll actually `export` for others to use</span>
+<span class="token keyword">function</span> <span class="token function">grabPartialObject</span><span class="token punctuation">(</span>actualObj <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">,</span> query <span class="token operator">=</span> <span class="token string">''</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">const</span> requestedObj <span class="token operator">=</span> <span class="token function">graphQlQueryToJson</span><span class="token punctuation">(</span>query<span class="token punctuation">)</span><span class="token punctuation">.</span>query
+  <span class="token function">assignValuesToObjectKeys</span><span class="token punctuation">(</span>requestedObj<span class="token punctuation">,</span> actualObj<span class="token punctuation">)</span>
+  <span class="token keyword">return</span> requestedObj
+<span class="token punctuation">}</span>
+</code></pre>
+<h3 id="link-usage-example">Usage example</h3>
+<pre class="language-js"><code class="language-js"><span class="token keyword">const</span> <span class="token punctuation">{</span> grabPartialObject <span class="token punctuation">}</span> <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'./some/helper/file'</span><span class="token punctuation">)</span>
+
+<span class="token keyword">const</span> myFridge <span class="token operator">=</span> <span class="token punctuation">{</span>  
+	weekOldPasta<span class="token operator">:</span> <span class="token punctuation">{</span>  
+		noodleSogginess<span class="token operator">:</span> “high”<span class="token punctuation">,</span>  
+		numMeatballs<span class="token operator">:</span> <span class="token number">4</span><span class="token punctuation">,</span>  
+		isEdible<span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>  
+	<span class="token punctuation">}</span><span class="token punctuation">,</span>  
+	panSearedSalmon<span class="token operator">:</span> <span class="token punctuation">{</span>  
+		oilUsed<span class="token operator">:</span> “avocado”<span class="token punctuation">,</span>  
+		numSpices<span class="token operator">:</span> <span class="token number">3</span><span class="token punctuation">,</span>  
+		isEdible<span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>  
+	<span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">const</span> whatsEdible <span class="token operator">=</span> <span class="token function">grabPartialObject</span><span class="token punctuation">(</span>myFridge<span class="token punctuation">,</span> <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">{
+  weekOldPasta {
+    isEdible
+  }
+  panSearedSalmon {
+    isEdible
+  }
+}</span><span class="token template-punctuation string">`</span></span><span class="token punctuation">)</span>
+console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>whatsEdible<span class="token punctuation">)</span>
+<span class="token comment">/* 👉 {
+	weekOldPasta: {
+		isEdible: false,
+	},
+	panSearedSalmon: {
+		isEdible: true,
+	},
+}
+*/</span>
+</code></pre>
+</div><hr/><footer><p>Learn a little something? <strong><a href="https://twitter.com/intent/tweet?text=Woah,%20I%20learned%20so%20much%20from%20this!%20%22Grabbing%20subsets%20of%20JS%20object%20properties%20with...%20GraphQL?%22%20by%20@bholmesdev%20https://bholmes.dev/blog/query-json-objects-graphql/" target="_blank" rel="noreferrer">Share this post</a> on Twitter!</strong></p><section class="about-the-author"><img src="../../assets/images/me.jpg" alt="Hand drawn portrait of Ben Holmes"/><div><address><a rel="author" href="../../index.html">Ben Holmes </a></address>is a web developer + UI designer by trade from Charleston SC. He's been tinkering with JavaScript and CSS since 2014, and has lead a <a href="https://hack4impact.org/dev-bootcamp">full stack bootcamp curriculum</a> used by universities across the country. Now, he's working fulltime at Peloton and teaching the world a bit of web whimsy in his spare time.</div></section></footer></article></main><footer><div class="content"><div class="newsletter"><h2>Woah, there's a newsletter too!</h2><form action="https://tinyletter.com/bholmesdev" method="post" target="_blank"><label for="email">Email</label><input id="email" type="email" name="email" placeholder="10xengineer@genius.club" required="required"/><p class="newsletter__never-spam">Don't worry, I won't spam you</p><button class="cta-link" type="submit">Yes please, more content<svg xmlns="http://www.w3.org/2000/svg" fill="#5f4b32" width="34" height="34" viewBox="0 0 512 512"><path d="M48 270.9l118.9 44.6L181.7 464 256 360l104 104L464 48 48 270.9zm294.9 126L260 313.4 374.9 152 193.6 289.8 124.9 265l291-156.2-73 288.1z"/></svg></svg></button></form></div><div class="socials"><div class="socials__links"><a href="https://dev.to/bholmesdev" target="_blank" rel="noreferrer" aria-label="Ben's DEV.to blog"><svg xmlns="http://www.w3.org/2000/svg" fill="#5f4b32" width="34" height="34" viewBox="0 0 34 34"><path d="M18.119,22.38a1.48,1.48,0,0,0-.881-.33H15.917v7.929h1.321a1.449,1.449,0,0,0,.881-.33,1.172,1.172,0,0,0,.44-.991V23.371a1.172,1.172,0,0,0-.44-.991ZM39.669,9H12.331A3.332,3.332,0,0,0,9,12.324V39.676A3.332,3.332,0,0,0,12.331,43H39.669A3.332,3.332,0,0,0,43,39.676V12.324A3.332,3.332,0,0,0,39.669,9ZM20.7,28.67a3.466,3.466,0,0,1-3.668,3.586H13.508V19.7H17.1a3.462,3.462,0,0,1,3.593,3.586L20.7,28.67Zm7.647-6.731H24.3v2.918h2.471V27.1H24.3v2.918h4.047v2.244H23.626a1.531,1.531,0,0,1-1.569-1.494v-9.5A1.531,1.531,0,0,1,23.55,19.7h4.8v2.237Zm7.86,8.755c-1,2.333-2.794,1.872-3.6,0L29.682,19.7h2.471l2.257,8.631L36.654,19.7h2.471L36.207,30.694Z" transform="translate(-9 -9)"/></svg></a><a href="https://twitter.com/bholmesdev" target="_blank" rel="noreferrer" aria-label="Ben's Twitter"><svg xmlns="http://www.w3.org/2000/svg" fill="#5f4b32" width="34" height="34" viewBox="0 0 34 34"><path d="M55.383,67.4a14.634,14.634,0,0,1-4.157,1.144,7.264,7.264,0,0,0,3.185-4.008,14.384,14.384,0,0,1-4.6,1.757,7.237,7.237,0,0,0-12.524,4.95,7.087,7.087,0,0,0,.187,1.652,20.514,20.514,0,0,1-14.924-7.574A7.253,7.253,0,0,0,24.8,75a7.07,7.07,0,0,1-3.29-.9v.09a7.245,7.245,0,0,0,5.809,7.1,7.287,7.287,0,0,1-1.907.254,6.829,6.829,0,0,1-1.361-.135,7.25,7.25,0,0,0,6.766,5.032,14.513,14.513,0,0,1-8.995,3.1,14.673,14.673,0,0,1-1.727-.1,20.234,20.234,0,0,0,11.081,3.275c13.331,0,20.613-11.043,20.613-20.621,0-.314-.007-.628-.022-.935A14.736,14.736,0,0,0,55.383,67.4Z" transform="translate(-20.1 -64)"/></svg></a><a href="https://github.com/holben888" target="_blank" rel="noreferrer" aria-label="Ben's GitHub"><svg xmlns="http://www.w3.org/2000/svg" fill="#5f4b32" width="34" height="34" viewBox="0 0 34 34"><path d="M10,115.987a18.6,18.6,0,0,0,.434,4.181,12.443,12.443,0,0,0,1.2,3.251,9.207,9.207,0,0,0,1.943,2.429,11.2,11.2,0,0,0,2.56,1.714,15.1,15.1,0,0,0,3.15,1.079,26,26,0,0,0,3.615.583q1.847.167,4.056.167,2.227,0,4.073-.167a26.227,26.227,0,0,0,3.626-.583,15.681,15.681,0,0,0,3.168-1.079,11.191,11.191,0,0,0,2.578-1.714,9.284,9.284,0,0,0,1.964-2.429,12.2,12.2,0,0,0,1.2-3.251A18.6,18.6,0,0,0,44,115.987a10.2,10.2,0,0,0-2.758-7.133,8.923,8.923,0,0,0,.274-.906,12.4,12.4,0,0,0,.232-1.447,8.1,8.1,0,0,0-.083-2.168,11.516,11.516,0,0,0-.708-2.512l-.25-.049a3.352,3.352,0,0,0-.874.024,9.708,9.708,0,0,0-1.412.3,12.073,12.073,0,0,0-2.078.864,24.135,24.135,0,0,0-2.685,1.6,26.284,26.284,0,0,0-6.668-.666,26.208,26.208,0,0,0-6.651.666,22.6,22.6,0,0,0-2.7-1.6,13.381,13.381,0,0,0-2.054-.864,8.05,8.05,0,0,0-1.429-.291,4.676,4.676,0,0,0-.84-.042,1.455,1.455,0,0,0-.274.059,11.462,11.462,0,0,0-.708,2.512,8.1,8.1,0,0,0-.083,2.168,12.664,12.664,0,0,0,.232,1.447,8.922,8.922,0,0,0,.274.906A10.223,10.223,0,0,0,10,115.987Zm4.174,4.174a5.879,5.879,0,0,1,2.179-4.389,4.334,4.334,0,0,1,1.513-.906,6.575,6.575,0,0,1,1.953-.347c.725-.028,1.422-.021,2.085.017s1.485.09,2.46.156,1.818.1,2.526.1,1.551-.031,2.529-.1,1.8-.118,2.46-.156,1.36-.045,2.085-.017a6.687,6.687,0,0,1,1.953.347,4.366,4.366,0,0,1,1.513.906,5.814,5.814,0,0,1,2.179,4.389,8.215,8.215,0,0,1-.357,2.536,6.367,6.367,0,0,1-.912,1.853,4.535,4.535,0,0,1-1.547,1.273,10.782,10.782,0,0,1-1.929.8,13.909,13.909,0,0,1-2.411.441c-.982.1-1.856.17-2.626.191s-1.749.035-2.935.035-2.165-.01-2.935-.035-1.644-.087-2.626-.191a13.648,13.648,0,0,1-2.411-.441,11.153,11.153,0,0,1-1.929-.8,4.535,4.535,0,0,1-1.547-1.273,6.414,6.414,0,0,1-.916-1.853A8.438,8.438,0,0,1,14.174,120.161Zm17.076-.333c0,1.759.951,3.188,2.127,3.188s2.127-1.426,2.127-3.188-.951-3.188-2.127-3.188S31.25,118.066,31.25,119.828Zm-12.75,0c0,1.759.951,3.188,2.127,3.188s2.127-1.426,2.127-3.188-.951-3.188-2.127-3.188S18.5,118.066,18.5,119.828Z" transform="translate(-10 -101.754)"/></svg></a></div><p>Follow along with <strong>Ben</strong> for the fun, for the whimsy, and for the love of building websites ♥ </p></div></div></footer></div></body>
+          <script src="../../__main.mjs" defer></script>
+          
+          
+<!-- Mirrored from bholmes.dev/blog/query-json-objects-graphql/ by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 16 Mar 2022 05:56:47 GMT -->
+</html>

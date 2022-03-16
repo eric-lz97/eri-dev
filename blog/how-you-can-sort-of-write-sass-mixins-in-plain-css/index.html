@@ -1,0 +1,150 @@
+<!DOCTYPE html><html lang="en-US">
+<!-- Mirrored from bholmes.dev/blog/how-you-can-sort-of-write-sass-mixins-in-plain-css/ by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 16 Mar 2022 05:58:06 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+<head><link rel="stylesheet" href="__styles.html"><link rel="stylesheet" href=../../_layouts/__styles.css><link rel="stylesheet" href=../../_layouts/blog-post/__styles.css><title>How you can (sort of) write SASS @mixins in plain CSS</title><link rel="preload" href="https://use.typekit.net/liz3dnm.css" as="style"/><link rel="preload" href="../../assets/fonts/Atkinson/Atkinson-Hyperlegible-Regular.woff2" as="font" crossorigin="anonymous"/><link rel="preload" href="../../assets/fonts/Atkinson/Atkinson-Hyperlegible-Bold.woff2" as="font" crossorigin="anonymous"/><link rel="preload" href="../../assets/fonts/Atkinson/Atkinson-Hyperlegible-Italic.woff2" as="font" crossorigin="anonymous"/><link rel="preload" href="../../assets/fonts/Atkinson/Atkinson-Hyperlegible-BoldItalic.woff2" as="font" crossorigin="anonymous"/><link rel="stylesheet" href="https://use.typekit.net/liz3dnm.css"/><link rel="icon" type="img/jpg" href="../../assets/favicon.jpg"/><link rel="canonical" href="index.html"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><!-- TODO: automatically generate these at buildtime--><link rel="modulepreload" href="__client.html"/><link rel="modulepreload" href="__data.html"/><link rel="modulepreload" href="../../_layouts/__client.mjs"/><link rel="modulepreload" href="../../_layouts/__data.mjs"/><link rel="preload" as="fetch" href="../../index-2.html"/><link rel="preload" as="fetch" href="../../work/index.html"/><link rel="preload" as="fetch" href="../../contact/index.html"/><meta name="author" content="Ben Holmes"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:site" content="@bholmesdev"/><meta name="twitter:creator" content="@bholmesdev"/><meta name="description" content="CSS variables are super powerful. Let's see how they can make repeated styles less DRY"/><meta property="og:url" content="index.html"/><meta property="og:image" content="../../assets/og-images/me.jpg"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:site_name" content="Ben Holmes"/><meta property="og:title" content="How you can (sort of) write SASS @mixins in plain CSS"/><meta property="og:description" content="CSS variables are super powerful. Let's see how they can make repeated styles less DRY"/><!-- Analytics--><script async="async" defer="defer" data-domain="bholmes.dev" src="https://stats.bholmes.dev/js/index.js"></script></head><body><div id="loading-spinner" aria-label="loading"><div class="loading-spinner__graphic"><div class="loading-spinner__graphic--dash"></div><div class="loading-spinner__graphic--dash"></div><div class="loading-spinner__graphic--dash"></div></div></div><nav id="site-navigation"><div class="jump-to-section__container"><button id="jump-to-section__toggle" aria-label="Reveal table of contents"><span>0</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M128 192l128 128 128-128z"/></svg></button><div class="jump-to-section__label-container"><p id="jump-to-section__label"></p></div><ul id="jump-to-section__links"></ul></div><div class="primary-nav__container"><ul id="primary-nav__links"><li><a href="../../index.html">Ben</a></li><li><a class="active" href="../index.html">Blog</a></li><li><a href="../../work/index-2.html">Works</a></li><li><a href="../../contact/index-2.html">Contact</a></li></ul><button id="primary-nav__toggle" aria-label="Reveal navigation links"><div class="stripe-top"></div><div class="stripe-middle"></div><div class="stripe-bottom"></div></button></div></nav><div id="loading-spinner" aria-label="loading"><div class="loading-spinner__graphic"><div class="loading-spinner__graphic--dash"></div><div class="loading-spinner__graphic--dash"></div><div class="loading-spinner__graphic--dash"></div></div></div><div data-page="_layouts/blog-post"><main><article data-page="blog/how-you-can-sort-of-write-sass-mixins-in-plain-css"><header><h1>How you can (sort of) write SASS @mixins in plain CSS</h1><p class="details"><span><strong>4</strong> minute read</span><span class="spacer">•</span><span>Last updated <time pubdate="pubdate" datetime="2020-05-08T22:13:48.640Z">May 8, 2020</time></span></p></header><div><p><em><strong>Trigger warning:</strong> I may use SASS and SCSS interchangeably throughout this post. You've been warned</em> 😈</p>
+<p>You probably clicked on this post thinking &quot;wait, you can't write mixins in plain CSS. What kind of clickbait is this?&quot;</p>
+<p>Let me admit something right off the bat: this post <em>does not</em> show a one-to-one solution to replicate everything amazing about mixins. It's not like there's some magical corner of CSS to <strong>ENGAGE SASS MODE.</strong></p>
+<p><img src="https://media1.tenor.com/images/faf7ef24e333a644891ae19a07da3529/tenor.gif?itemid=5564441" alt="Plankton (from Spongebob) whipping a krabby patty into maximum overdrive" loading="lazy"  /></p>
+<p>So yes, the pattern I'm about to detail isn't a <em>direct</em> translation of SASS / Stylus / LESS mixins. Still, it will help you overcome a problem that makes you reach for mixins in the first place:</p>
+<ol>
+<li>You have some CSS you want to reuse in a bunch of places</li>
+<li>You want to pass some <strong>parameters</strong> to that reusable CSS to adjust its behavior</li>
+</ol>
+<h2 id="link-alright-expectations-lowered-what-do-ya-got">Alright, expectations lowered. What do ya got?</h2>
+<p>Well, it all starts with our friend, <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties" target="_blank" rel="noreferrer">CSS variables</a>.</p>
+<p>If you haven't used them before, CSS variables are a lot like SASS variables; you can store anything you want in them, and you can use them in any ruleset you define. However, these variables are <em>extra powerful</em>. Rather than being a value you define <strong>once</strong> and use everywhere, CSS variables can be reassigned at <strong>any level of the cascade</strong>. SASS details this distinction <a href="https://sass-lang.com/documentation/variables" target="_blank" rel="noreferrer">on their own documentation</a>.</p>
+<p>That kind of power let's you pull off something like this:</p>
+<pre class="language-html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token style-attr"><span class="token attr-name">style</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span><span class="token style language-css"><span class="token property">--theme-color</span><span class="token punctuation">:</span> red</span><span class="token punctuation">"</span></span></span><span class="token punctuation">></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span><span class="token punctuation">></span></span>I'm a red paragraph!<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token style-attr"><span class="token attr-name">style</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span><span class="token style language-css"><span class="token property">--theme-color</span><span class="token punctuation">:</span> blue</span><span class="token punctuation">"</span></span></span><span class="token punctuation">></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span><span class="token punctuation">></span></span>I'm a blue paragraph!<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">></span></span>
+</code></pre>
+<pre class="language-css"><code class="language-css"><span class="token selector">p</span> <span class="token punctuation">{</span>
+  <span class="token property">color</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--theme-color<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>Now, each paragraph will have a different color, depending on the variable value assigned by the parent <code>div</code>. Nice!</p>
+<h2 id="link-a-concrete-example">A concrete example</h2>
+<p>Say you have some social links on your site. You want all of these links to have a uniform layout, but you want to adjust the coloring to match the site you're linking to. In this case, we have two links to consider:</p>
+<p><img src="https://dev-to-uploads.s3.amazonaws.com/i/nxbwv2mdv6e4vzt5xuz2.gif" alt="Demo of two links with different colors (Twitter and GitHub)" loading="lazy"  /></p>
+<p>There's a bit more to this example than meets the eye. Notice each link has a different color in not one, but <em>four places</em>:</p>
+<ul>
+<li>The text <code>color</code></li>
+<li>The SVG icon's <code>fill</code></li>
+<li>The link <code>border</code></li>
+<li>The <code>background-color</code> when you hover</li>
+</ul>
+<p>Without variables, this would be extremely annoying / not-DRY. We'd have to write four rulesets (including nested styling for the icon) for every new color we add 💀</p>
+<p>If you're cool enough to use a preprocessor, you could truncate your styles using a handy mixin. It <a href="https://www.youtube.com/watch?v=TLGWQfK-6DY" target="_blank" rel="noreferrer">goes a little something like this</a>:</p>
+<pre class="language-scss"><code class="language-scss"><span class="token keyword">@mixin</span> <span class="token function">color-link</span><span class="token punctuation">(</span><span class="token variable">$color</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token property">color</span><span class="token punctuation">:</span> <span class="token variable">$color</span><span class="token punctuation">;</span>
+  <span class="token property">border</span><span class="token punctuation">:</span> 1px solid <span class="token variable">$color</span><span class="token punctuation">;</span>
+  
+  <span class="token comment">/* color the nested icon */</span>
+  <span class="token selector">svg </span><span class="token punctuation">{</span>
+    <span class="token property">fill</span><span class="token punctuation">:</span> <span class="token variable">$color</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  
+  <span class="token comment">/* change the background color on hover */</span>
+  <span class="token selector"><span class="token parent important">&amp;</span>:hover </span><span class="token punctuation">{</span>
+    <span class="token property">background-color</span><span class="token punctuation">:</span> <span class="token variable">$color</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>Now, if we ever have a new link color to add, we can write a nice one-liner in a new selector:</p>
+<pre class="language-scss"><code class="language-scss"><span class="token selector">.twitter-link </span><span class="token punctuation">{</span>
+  <span class="token keyword">@include</span> <span class="token function">color-link</span><span class="token punctuation">(</span>#1fa0f2<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p %="" codepen="" https:codepen.iobholmesdevpenYzyavop="" default-tab="css,result" %=""><strong>Here's a Pen to show this solution in action:</strong></p>
+<h3 id="link-alright-but-plain-css-cant-do-that">Alright, but plain CSS can't do that...</h3>
+<p>That's where you're <em>wrong!</em> Though CSS lacks our nifty <code>@include</code> syntax, we can still pass variables to a <code>color-link</code> ruleset in a similar way.</p>
+<p>Let's start with a raw example, no variables applied:</p>
+<pre class="language-css"><code class="language-css"><span class="token comment">/* change our mixin to a CSS class */</span>
+<span class="token selector">a.color-link</span> <span class="token punctuation">{</span>
+  <span class="token comment">/* replace each $color reference with a hardcoded val for now */</span>
+  <span class="token property">color</span><span class="token punctuation">:</span> #1fa0f2<span class="token punctuation">;</span>
+  <span class="token property">border</span><span class="token punctuation">:</span> 1px solid #1fa0f2<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">/* CSS can't do nested rulesets, so we gotta separate these out */</span>
+<span class="token selector">a.color-link > svg</span> <span class="token punctuation">{</span>
+  <span class="token property">fill</span><span class="token punctuation">:</span> #1fa0f2<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token selector">a.color-link:hover</span> <span class="token punctuation">{</span>
+  <span class="token property">background-color</span><span class="token punctuation">:</span> #1fa0f2<span class="token punctuation">;</span>
+  <span class="token property">color</span><span class="token punctuation">:</span> white<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token selector">a.color-link:hover > svg</span> <span class="token punctuation">{</span>
+  <span class="token property">fill</span><span class="token punctuation">:</span> white<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>We did a couple things here:</p>
+<ol>
+<li>We turned our <code>color-link</code> mixin into a plain ole' CSS class</li>
+<li>We got rid of our nesting syntax since CSS still can't do that (<a href="https://tabatkins.github.io/specs/css-nesting/" target="_blank" rel="noreferrer">but it could be coming soon!</a>)</li>
+</ol>
+<p><strong>Now, we're ready to introduce some variable magic.</strong> ✨</p>
+<pre class="language-css"><code class="language-css"><span class="token selector">a.color-link</span> <span class="token punctuation">{</span>
+  <span class="token comment">/* replace our hardcoded vals with a variable reference */</span>
+  <span class="token property">color</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--color<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token property">border</span><span class="token punctuation">:</span> 1px solid <span class="token function">var</span><span class="token punctuation">(</span>--color<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token selector">a.color-link > svg</span> <span class="token punctuation">{</span>
+  <span class="token property">fill</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--color<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token selector">a.color-link:hover</span> <span class="token punctuation">{</span>
+  <span class="token property">background-color</span><span class="token punctuation">:</span> <span class="token function">var</span><span class="token punctuation">(</span>--color<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token property">color</span><span class="token punctuation">:</span> white<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token selector">a.color-link:hover > svg</span> <span class="token punctuation">{</span>
+  <span class="token property">fill</span><span class="token punctuation">:</span> white<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>And finally, we'll rewrite our <code>twitter</code> and <code>github</code> classes from before:</p>
+<pre class="language-css"><code class="language-css"><span class="token selector">.twitter-link</span> <span class="token punctuation">{</span>
+  <span class="token property">--color</span><span class="token punctuation">:</span> #1fa0f2<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token selector">.github-link</span> <span class="token punctuation">{</span>
+  <span class="token property">--color</span><span class="token punctuation">:</span> #24292D<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p><em>Boom.</em> With CSS variables, we can just assign a value to our <code>color</code> variable in whatever CSS selector we choose. As long as we apply either of these guys alongside our <code>color-link</code> class...</p>
+<pre class="language-html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>color-link twitter-link<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>...<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">></span></span>
+</code></pre>
+<p>Our <code>color-link</code> &quot;mixin&quot; will apply the appropriate colors where we need them!</p>
+<p %="" codepen="" https:codepen.iobholmesdevpenLYpdMyr="" default-tab="css,result" %=""><strong>Here's another CodePen to see this working:</strong></p>
+<h2 id="link-yes-there-are-still-limitations">Yes, there are still limitations</h2>
+<p>This definitely makes your plain CSS stylesheets more DRY, but it fails to address some funkier use cases.</p>
+<p>For example, SASS can pull off conditionals and looping inside its mixins. This can let you, say, pass true / false booleans as parameters to switch between styles.</p>
+<pre class="language-scss"><code class="language-scss"><span class="token comment">/* arbitrary example, applying different layout mixins depending on browser support */</span>
+<span class="token keyword">@mixin</span> <span class="token function">grid-if-supported</span><span class="token punctuation">(</span><span class="token variable">$grid</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">@if</span> <span class="token selector"><span class="token variable">$grid</span> </span><span class="token punctuation">{</span>
+        <span class="token keyword">@include</span> crazy-grid-layout<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">@else</span> <span class="token punctuation">{</span>
+        <span class="token keyword">@include</span> crazier-flexbox-layout<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p><em>Inspired by a rundown of magical mixin features <a href="https://scotch.io/tutorials/how-to-use-sass-mixins" target="_blank" rel="noreferrer">found here</a></em></p>
+<p>We also have to modify our HTML by applying more classes. Depending on who you ask, this defeats part of a mixin's sexiness. Mixins can be dropped into any existing ruleset you already have, without needing to create new classes or rulesets.</p>
+<p>I agree with this somewhat, but this post should at least show off how powerful CSS variables really are. They can even store complicated styles with spacing and commas, like <code>--crazy-padding: 12px 12px 0 0</code> or <code>--dope-box-shadow: 1px 2px 3px #abcabc</code>. The same can't be said for SASS mixin parameters!</p>
+<h2 id="link-thanks-for-reading">Thanks for reading!</h2>
+<p>This post is part of my hard-headed goal to ditch CSS preprocessors. I definitely miss nested styles... but the power of CSS variables, combined with literal <em>microseconds</em> of build time whenever I save, make me happy enough with raw CSS these days 😁</p>
+<p>In case you're interested, I have another post taking a deeper dive into CSS variables, exploring how you can down on JS style manipulation. <a href="https://dev.to/bholmesdev/how-using-css-variables-cut-down-on-my-javascript-dc4" target="_blank" rel="noreferrer">Check it out here!</a></p>
+<p>Also, expect some more posts over the next few months. I finally graduated college, which I have... <a href="https://twitter.com/BHolmesDev/status/1258771501647646722?s=20" target="_blank" rel="noreferrer">mixed feelings about to say the least</a>. This month should be nothing but pumping out quarantine-ridden content before I start my first <em>adult job.</em></p>
+<p><strong>So, join the newsletter below if this helped you!</strong> More to come soon.</p>
+</div><hr/><footer><p>Learn a little something? <strong><a href="https://twitter.com/intent/tweet?text=Woah,%20I%20learned%20so%20much%20from%20this!%20%22How%20you%20can%20(sort%20of)%20write%20SASS%20@mixins%20in%20plain%20CSS%22%20by%20@bholmesdev%20https://bholmes.dev/blog/how-you-can-sort-of-write-sass-mixins-in-plain-css/" target="_blank" rel="noreferrer">Share this post</a> on Twitter!</strong></p><section class="about-the-author"><img src="../../assets/images/me.jpg" alt="Hand drawn portrait of Ben Holmes"/><div><address><a rel="author" href="../../index.html">Ben Holmes </a></address>is a web developer + UI designer by trade from Charleston SC. He's been tinkering with JavaScript and CSS since 2014, and has lead a <a href="https://hack4impact.org/dev-bootcamp">full stack bootcamp curriculum</a> used by universities across the country. Now, he's working fulltime at Peloton and teaching the world a bit of web whimsy in his spare time.</div></section></footer></article></main><footer><div class="content"><div class="newsletter"><h2>Woah, there's a newsletter too!</h2><form action="https://tinyletter.com/bholmesdev" method="post" target="_blank"><label for="email">Email</label><input id="email" type="email" name="email" placeholder="10xengineer@genius.club" required="required"/><p class="newsletter__never-spam">Don't worry, I won't spam you</p><button class="cta-link" type="submit">Yes please, more content<svg xmlns="http://www.w3.org/2000/svg" fill="#5f4b32" width="34" height="34" viewBox="0 0 512 512"><path d="M48 270.9l118.9 44.6L181.7 464 256 360l104 104L464 48 48 270.9zm294.9 126L260 313.4 374.9 152 193.6 289.8 124.9 265l291-156.2-73 288.1z"/></svg></svg></button></form></div><div class="socials"><div class="socials__links"><a href="https://dev.to/bholmesdev" target="_blank" rel="noreferrer" aria-label="Ben's DEV.to blog"><svg xmlns="http://www.w3.org/2000/svg" fill="#5f4b32" width="34" height="34" viewBox="0 0 34 34"><path d="M18.119,22.38a1.48,1.48,0,0,0-.881-.33H15.917v7.929h1.321a1.449,1.449,0,0,0,.881-.33,1.172,1.172,0,0,0,.44-.991V23.371a1.172,1.172,0,0,0-.44-.991ZM39.669,9H12.331A3.332,3.332,0,0,0,9,12.324V39.676A3.332,3.332,0,0,0,12.331,43H39.669A3.332,3.332,0,0,0,43,39.676V12.324A3.332,3.332,0,0,0,39.669,9ZM20.7,28.67a3.466,3.466,0,0,1-3.668,3.586H13.508V19.7H17.1a3.462,3.462,0,0,1,3.593,3.586L20.7,28.67Zm7.647-6.731H24.3v2.918h2.471V27.1H24.3v2.918h4.047v2.244H23.626a1.531,1.531,0,0,1-1.569-1.494v-9.5A1.531,1.531,0,0,1,23.55,19.7h4.8v2.237Zm7.86,8.755c-1,2.333-2.794,1.872-3.6,0L29.682,19.7h2.471l2.257,8.631L36.654,19.7h2.471L36.207,30.694Z" transform="translate(-9 -9)"/></svg></a><a href="https://twitter.com/bholmesdev" target="_blank" rel="noreferrer" aria-label="Ben's Twitter"><svg xmlns="http://www.w3.org/2000/svg" fill="#5f4b32" width="34" height="34" viewBox="0 0 34 34"><path d="M55.383,67.4a14.634,14.634,0,0,1-4.157,1.144,7.264,7.264,0,0,0,3.185-4.008,14.384,14.384,0,0,1-4.6,1.757,7.237,7.237,0,0,0-12.524,4.95,7.087,7.087,0,0,0,.187,1.652,20.514,20.514,0,0,1-14.924-7.574A7.253,7.253,0,0,0,24.8,75a7.07,7.07,0,0,1-3.29-.9v.09a7.245,7.245,0,0,0,5.809,7.1,7.287,7.287,0,0,1-1.907.254,6.829,6.829,0,0,1-1.361-.135,7.25,7.25,0,0,0,6.766,5.032,14.513,14.513,0,0,1-8.995,3.1,14.673,14.673,0,0,1-1.727-.1,20.234,20.234,0,0,0,11.081,3.275c13.331,0,20.613-11.043,20.613-20.621,0-.314-.007-.628-.022-.935A14.736,14.736,0,0,0,55.383,67.4Z" transform="translate(-20.1 -64)"/></svg></a><a href="https://github.com/holben888" target="_blank" rel="noreferrer" aria-label="Ben's GitHub"><svg xmlns="http://www.w3.org/2000/svg" fill="#5f4b32" width="34" height="34" viewBox="0 0 34 34"><path d="M10,115.987a18.6,18.6,0,0,0,.434,4.181,12.443,12.443,0,0,0,1.2,3.251,9.207,9.207,0,0,0,1.943,2.429,11.2,11.2,0,0,0,2.56,1.714,15.1,15.1,0,0,0,3.15,1.079,26,26,0,0,0,3.615.583q1.847.167,4.056.167,2.227,0,4.073-.167a26.227,26.227,0,0,0,3.626-.583,15.681,15.681,0,0,0,3.168-1.079,11.191,11.191,0,0,0,2.578-1.714,9.284,9.284,0,0,0,1.964-2.429,12.2,12.2,0,0,0,1.2-3.251A18.6,18.6,0,0,0,44,115.987a10.2,10.2,0,0,0-2.758-7.133,8.923,8.923,0,0,0,.274-.906,12.4,12.4,0,0,0,.232-1.447,8.1,8.1,0,0,0-.083-2.168,11.516,11.516,0,0,0-.708-2.512l-.25-.049a3.352,3.352,0,0,0-.874.024,9.708,9.708,0,0,0-1.412.3,12.073,12.073,0,0,0-2.078.864,24.135,24.135,0,0,0-2.685,1.6,26.284,26.284,0,0,0-6.668-.666,26.208,26.208,0,0,0-6.651.666,22.6,22.6,0,0,0-2.7-1.6,13.381,13.381,0,0,0-2.054-.864,8.05,8.05,0,0,0-1.429-.291,4.676,4.676,0,0,0-.84-.042,1.455,1.455,0,0,0-.274.059,11.462,11.462,0,0,0-.708,2.512,8.1,8.1,0,0,0-.083,2.168,12.664,12.664,0,0,0,.232,1.447,8.922,8.922,0,0,0,.274.906A10.223,10.223,0,0,0,10,115.987Zm4.174,4.174a5.879,5.879,0,0,1,2.179-4.389,4.334,4.334,0,0,1,1.513-.906,6.575,6.575,0,0,1,1.953-.347c.725-.028,1.422-.021,2.085.017s1.485.09,2.46.156,1.818.1,2.526.1,1.551-.031,2.529-.1,1.8-.118,2.46-.156,1.36-.045,2.085-.017a6.687,6.687,0,0,1,1.953.347,4.366,4.366,0,0,1,1.513.906,5.814,5.814,0,0,1,2.179,4.389,8.215,8.215,0,0,1-.357,2.536,6.367,6.367,0,0,1-.912,1.853,4.535,4.535,0,0,1-1.547,1.273,10.782,10.782,0,0,1-1.929.8,13.909,13.909,0,0,1-2.411.441c-.982.1-1.856.17-2.626.191s-1.749.035-2.935.035-2.165-.01-2.935-.035-1.644-.087-2.626-.191a13.648,13.648,0,0,1-2.411-.441,11.153,11.153,0,0,1-1.929-.8,4.535,4.535,0,0,1-1.547-1.273,6.414,6.414,0,0,1-.916-1.853A8.438,8.438,0,0,1,14.174,120.161Zm17.076-.333c0,1.759.951,3.188,2.127,3.188s2.127-1.426,2.127-3.188-.951-3.188-2.127-3.188S31.25,118.066,31.25,119.828Zm-12.75,0c0,1.759.951,3.188,2.127,3.188s2.127-1.426,2.127-3.188-.951-3.188-2.127-3.188S18.5,118.066,18.5,119.828Z" transform="translate(-10 -101.754)"/></svg></a></div><p>Follow along with <strong>Ben</strong> for the fun, for the whimsy, and for the love of building websites ♥ </p></div></div></footer></div></body>
+          <script src="../../__main.mjs" defer></script>
+          
+          
+<!-- Mirrored from bholmes.dev/blog/how-you-can-sort-of-write-sass-mixins-in-plain-css/ by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 16 Mar 2022 05:58:09 GMT -->
+</html>

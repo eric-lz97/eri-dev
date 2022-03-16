@@ -1,0 +1,209 @@
+<!DOCTYPE html><html lang="en-US">
+<!-- Mirrored from bholmes.dev/blog/making-an-animated-image-carousel-the-easy-way-with-svelte/ by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 16 Mar 2022 05:58:09 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+<head><link rel="stylesheet" href="__styles.html"><link rel="stylesheet" href=../../_layouts/__styles.css><link rel="stylesheet" href=../../_layouts/blog-post/__styles.css><title>The power of SvelteJS: building an animated image carousel in &lt;30 lines of code ✨</title><link rel="preload" href="https://use.typekit.net/liz3dnm.css" as="style"/><link rel="preload" href="../../assets/fonts/Atkinson/Atkinson-Hyperlegible-Regular.woff2" as="font" crossorigin="anonymous"/><link rel="preload" href="../../assets/fonts/Atkinson/Atkinson-Hyperlegible-Bold.woff2" as="font" crossorigin="anonymous"/><link rel="preload" href="../../assets/fonts/Atkinson/Atkinson-Hyperlegible-Italic.woff2" as="font" crossorigin="anonymous"/><link rel="preload" href="../../assets/fonts/Atkinson/Atkinson-Hyperlegible-BoldItalic.woff2" as="font" crossorigin="anonymous"/><link rel="stylesheet" href="https://use.typekit.net/liz3dnm.css"/><link rel="icon" type="img/jpg" href="../../assets/favicon.jpg"/><link rel="canonical" href="index.html"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><!-- TODO: automatically generate these at buildtime--><link rel="modulepreload" href="__client.html"/><link rel="modulepreload" href="__data.html"/><link rel="modulepreload" href="../../_layouts/__client.mjs"/><link rel="modulepreload" href="../../_layouts/__data.mjs"/><link rel="preload" as="fetch" href="../../index-2.html"/><link rel="preload" as="fetch" href="../../work/index.html"/><link rel="preload" as="fetch" href="../../contact/index.html"/><meta name="author" content="Ben Holmes"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:site" content="@bholmesdev"/><meta name="twitter:creator" content="@bholmesdev"/><meta name="description" content="Let's make a carousel of images that fade between each other, all in 30 lines of code."/><meta property="og:url" content="index.html"/><meta property="og:image" content="https://dev-to-uploads.s3.amazonaws.com/i/vy7ymdy80kokmgf0jfx8.png"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:site_name" content="Ben Holmes"/><meta property="og:title" content="The power of SvelteJS: building an animated image carousel in &lt;30 lines of code ✨"/><meta property="og:description" content="Let's make a carousel of images that fade between each other, all in 30 lines of code."/><!-- Analytics--><script async="async" defer="defer" data-domain="bholmes.dev" src="https://stats.bholmes.dev/js/index.js"></script></head><body><div id="loading-spinner" aria-label="loading"><div class="loading-spinner__graphic"><div class="loading-spinner__graphic--dash"></div><div class="loading-spinner__graphic--dash"></div><div class="loading-spinner__graphic--dash"></div></div></div><nav id="site-navigation"><div class="jump-to-section__container"><button id="jump-to-section__toggle" aria-label="Reveal table of contents"><span>0</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M128 192l128 128 128-128z"/></svg></button><div class="jump-to-section__label-container"><p id="jump-to-section__label"></p></div><ul id="jump-to-section__links"></ul></div><div class="primary-nav__container"><ul id="primary-nav__links"><li><a href="../../index.html">Ben</a></li><li><a class="active" href="../index.html">Blog</a></li><li><a href="../../work/index-2.html">Works</a></li><li><a href="../../contact/index-2.html">Contact</a></li></ul><button id="primary-nav__toggle" aria-label="Reveal navigation links"><div class="stripe-top"></div><div class="stripe-middle"></div><div class="stripe-bottom"></div></button></div></nav><div id="loading-spinner" aria-label="loading"><div class="loading-spinner__graphic"><div class="loading-spinner__graphic--dash"></div><div class="loading-spinner__graphic--dash"></div><div class="loading-spinner__graphic--dash"></div></div></div><div data-page="_layouts/blog-post"><main><article data-page="blog/making-an-animated-image-carousel-the-easy-way-with-svelte"><header><picture><source type="image/webp" srcset="/assets/pug-images/425e6f6c-600.webp 600w, /assets/pug-images/425e6f6c-800.webp 800w, /assets/pug-images/425e6f6c-1400.webp 1400w" sizes="(min-width: 800px) 720px, 100vw"><source type="image/jpeg" srcset="/assets/pug-images/425e6f6c-600.jpeg 600w, /assets/pug-images/425e6f6c-800.jpeg 800w, /assets/pug-images/425e6f6c-1400.jpeg 1400w" sizes="(min-width: 800px) 720px, 100vw"><img alt="Let's make a carousel of images that fade between each other, all in 30 lines of code." loading="lazy" decoding="async" widths="800,1000,1400" src="../../assets/pug-images/425e6f6c-600.jpg" width="1400" height="627"></picture><h1>The power of SvelteJS: building an animated image carousel in &lt;30 lines of code ✨</h1><p class="details"><span><strong>10</strong> minute read</span><span class="spacer">•</span><span>Last updated <time pubdate="pubdate" datetime="2020-04-07T20:01:36.550Z">April 7, 2020</time></span></p></header><div><p>Ah image carousels... the classic web dev conundrum. Back in the dark ages (so like 5 years ago), you'd be reaching for bootstrap faster than you could spell &quot;bower.&quot; But now, with all the crazy component-based frameworks at our disposal, we might as well build one with our bare hands.</p>
+<p>I've build carousels in a couple settings (React, Angular 1.x, vanilla ES6) with varying degrees of simplicity, but nothing compares to a neat trick I found using <a href="https://svelte.dev/" target="_blank" rel="noreferrer">Svelte</a>. I'll start by walking through a solution you can use in any framework you choose, then cover the <em>super slick</em> solution I found. This article should help whether you're already using Svelte, or you're considering it for your next web project. Since some Svelte newbies might find themselves here, I'll try to explain any Svelte-isms that pop up. Onwards!</p>
+<h2 id="link-what-well-be-building">What we'll be building</h2>
+<p>Let's see what kind of carousel we're talking here.</p>
+<p><img src="https://res.cloudinary.com/bog/image/upload/v1586276527/blog/bog-logo-showdev/ewltvx3yuyguhue7qpi8.gif" alt="Finished clickable image carousel" loading="lazy"  /></p>
+<h3 id="link-the-behavior-we-want-to-see">The behavior we want to see</h3>
+<ol>
+<li>
+<p>A simple &quot;next&quot; button should show us the next image. We should also wrap around to the beginning when we reach the end of our carousel.</p>
+</li>
+<li>
+<p>Images should fade <em>between</em> each other. This means we can't just change the image's <code>src</code> everytime we hit &quot;Next.&quot; There's a short in-between state where <strong>two images</strong> are showing, one fading out while the other fades in.</p>
+</li>
+<li>
+<p>The animation shouldn't break when we click really fast!</p>
+</li>
+</ol>
+<h2 id="link-tldr">TLDR</h2>
+<p>I get it. You're excited and what to copy / paste some working code into your project. Well, head over here to see a sandbox of the solution running with a nice browser preview!</p>
+<p>You can also skip down to <strong>Using a Svelte-y approach</strong> to understand how this works.</p>
+<p><em><strong>Note:</strong> the images may load somewhat slowly. I'm using picsum.photos to generate random images, but they should load faster if you're using static assets in your own project!</em></p>
+<p><a href="https://svelte.dev/repl/78bee610166a486a9304b9bfbeb77887?version=3.20.1" target="_blank" rel="noreferrer">🚀 Check out the finished REPL</a></p>
+<h2 id="link-the-framework-agnostic-approach-flip-flop-between-image-elements">The framework-agnostic approach: flip-flop between image elements</h2>
+<p>Before jumping into the real Svelte magic, let's see how we'd approach a carousel traditionally. I include this example since it's framework agnostic (<a href="https://codepen.io/bholmesdev/pen/abOeVMY" target="_blank" rel="noreferrer">easily made with vanilla JavaScript too!</a>), and similar to carousel tutorials you may have seen before. Still, we'll implement the algorithm using Svelte as a demo 🕺</p>
+<p>In short, we need to take care of that annoying &quot;in-between&quot; state where two images are showing during the fade animation. Naturally, we should probably add two images to our markup:</p>
+<pre class="language-html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>img</span> <span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>/static/image_1.jpg<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>img</span> <span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>/static/image_2.jpg<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span>
+</code></pre>
+<p>Let's also assume we're keeping track of our image carousel URLs in a big JavaScript array. That may look something like this:</p>
+<pre class="language-javascript"><code class="language-javascript"><span class="token keyword">const</span> carouselImages <span class="token operator">=</span> <span class="token punctuation">[</span>
+  <span class="token string">'/static/image_1.jpg'</span><span class="token punctuation">,</span>
+  <span class="token string">'/static/image_2.jpg'</span><span class="token punctuation">,</span>
+  <span class="token string">'/static/image_3.jpg'</span>
+<span class="token punctuation">]</span><span class="token punctuation">;</span>
+</code></pre>
+<p>Now, we need to figure out the logic to set the image sources correctly every time &quot;Next&quot; is clicked. This can get a little hairy, so let's walk through how our little algorithm will work:</p>
+<ol>
+<li>The first image element is showing the first image in our array. The second image is hidden.</li>
+<li>When we click &quot;next,&quot; we set the source of the second image to the <em>next</em> image in our array (so image 2). Then, we animate that image into view while the other animates out of view.</li>
+<li>The second image element is showing the second image in our array. The first image is hidden.</li>
+<li>When we click &quot;next,&quot; we change the first image source from <strong>the first image in the array (index 0)</strong> to the <strong>third image in the array (index 2)</strong> so that it shows the next image in the sequence. In other words, we bump up the index by 2. Then, we animate the first image element into view while the other animates out of view.</li>
+</ol>
+<p>... continue the pattern, bumping up the index of the <em>hidden</em> image by 2 every time it gets displayed.</p>
+<p>Here's a visual demonstration of how all that works!</p>
+<p><img src="https://res.cloudinary.com/bog/image/upload/v1586276545/blog/bog-logo-showdev/zehqkroq8cxvudz3xhhm.gif" alt="Visual demo of changing the image source" loading="lazy"  /></p>
+<h3 id="link-the-code">The code</h3>
+<p>If you've worked with component-based frameworks before, you've probably identified the state variables we need to keep track of:</p>
+<ul>
+<li><strong><code>firstIndex</code></strong> The array index for the first image <code>src</code></li>
+<li><strong><code>secondIndex</code></strong> The array index for the second image <code>src</code></li>
+<li><strong><code>showFirst</code></strong> A boolean for which image is currently displaying. In this case, <code>true</code> means we should show the first image, and <code>false</code> for the second</li>
+</ul>
+<p>Since this article's all about Svelte, I'll be using that framework to create and update these guys. But don't worry! This should be a pretty easy transition from your current framework of choice.</p>
+<h3 id="link-initial-setup">Initial setup</h3>
+<pre class="language-html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span><span class="token punctuation">></span></span><span class="token script"><span class="token language-javascript">
+	<span class="token keyword">const</span> carouselPhotos <span class="token operator">=</span> <span class="token punctuation">[</span>
+		<span class="token string">'https://picsum.photos/300/200?random=1'</span><span class="token punctuation">,</span>
+		<span class="token string">'https://picsum.photos/300/200?random=2'</span><span class="token punctuation">,</span>
+		<span class="token string">'https://picsum.photos/300/200?random=3'</span><span class="token punctuation">,</span>
+		<span class="token string">'https://picsum.photos/300/200?random=4'</span>
+	<span class="token punctuation">]</span>
+	
+  <span class="token comment">// state variables (yes, just regular ole "let" variables!)</span>
+	<span class="token keyword">let</span> firstIndex <span class="token operator">=</span> <span class="token number">0</span>
+	<span class="token keyword">let</span> secondIndex <span class="token operator">=</span> carouselPhotos<span class="token punctuation">.</span>length <span class="token operator">-</span> <span class="token number">1</span>
+	<span class="token keyword">let</span> showFirst <span class="token operator">=</span> <span class="token boolean">true</span>
+  
+  <span class="token keyword">const</span> <span class="token function-variable function">next</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">{</span>
+		<span class="token comment">// logic goes here!</span>
+	<span class="token punctuation">}</span>
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">></span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>img</span> <span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>{carouselPhotos[firstIndex]}</span> <span class="token punctuation">/></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>img</span> <span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>{carouselPhotos[secondIndex]}</span> <span class="token punctuation">/></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>button</span> <span class="token attr-name"><span class="token namespace">on:</span>click</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>{next}</span><span class="token punctuation">></span></span>Next!<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>button</span><span class="token punctuation">></span></span>
+</code></pre>
+<p>To start, we've created our state variables, carousel <code>src</code> URLs, all the markup we'll need, and a simple button click handler to jump to the next image.</p>
+<p>Also, notice that <code>secondIndex</code> starts at the <em>end</em> of the array. This is because we want our second index to start one image <em>behind</em> our first, so when bump up its index by 2, it becomes the next image in our array. Since we'll be allowing our indices to wrap to the beginning, we'll consider the last image to be the one before our first.</p>
+<h3 id="link-show-and-hide-images-on-click">Show and hide images on click</h3>
+<p>Now, let's write our handy algorithm using code:</p>
+<pre class="language-html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span><span class="token punctuation">></span></span><span class="token script"><span class="token language-javascript">
+  <span class="token operator">...</span>
+  <span class="token keyword">const</span> <span class="token function-variable function">next</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>showFirst<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token comment">// if the first image is showing, make sure</span>
+      <span class="token comment">// the second image shows the next array element</span>
+      secondIndex <span class="token operator">=</span> <span class="token punctuation">(</span>secondIndex <span class="token operator">+</span> <span class="token number">2</span><span class="token punctuation">)</span> <span class="token operator">%</span> carouselPhotos<span class="token punctuation">.</span>length
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+      <span class="token comment">// vice versa if the second image is showing</span>
+      firstIndex <span class="token operator">=</span> <span class="token punctuation">(</span>firstIndex <span class="token operator">+</span> <span class="token number">2</span><span class="token punctuation">)</span> <span class="token operator">%</span> carouselPhotos<span class="token punctuation">.</span>length	
+    <span class="token punctuation">}</span>
+    <span class="token comment">// flip-flop!</span>
+    showFirst <span class="token operator">=</span> <span class="token operator">!</span>showFirst
+  <span class="token punctuation">}</span>
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">></span></span>
+</code></pre>
+<p>That wasn't too bad! Notice how Svelte just lets you manipulate state variables directly without any fancy hooks of &quot;data&quot; objects. Just modify regular ole JS variables, and the UI will <em>react</em> ✨</p>
+<p>Here's how we can use our variables in the markup:</p>
+<pre class="language-html"><code class="language-html">...
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>style</span><span class="token punctuation">></span></span><span class="token style"><span class="token language-css">
+  <span class="token selector">img</span> <span class="token punctuation">{</span>
+    <span class="token property">opacity</span><span class="token punctuation">:</span> 0<span class="token punctuation">;</span>
+    <span class="token property">transition</span><span class="token punctuation">:</span> opacity 0.5s<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token selector">.visible</span> <span class="token punctuation">{</span>
+		<span class="token property">opacity</span><span class="token punctuation">:</span> 1<span class="token punctuation">;</span>
+	<span class="token punctuation">}</span>
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>style</span><span class="token punctuation">></span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>img</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>{showFirst</span> <span class="token attr-name">?</span> <span class="token attr-name">'visible'</span> <span class="token attr-name">:</span> <span class="token attr-name">''}</span> <span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>{carouselPhotos[firstIndex]}</span> <span class="token punctuation">/></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>img</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>{!showFirst</span> <span class="token attr-name">?</span> <span class="token attr-name">'visible'</span> <span class="token attr-name">:</span> <span class="token attr-name">''}</span> <span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>{carouselPhotos[secondIndex]}</span> <span class="token punctuation">/></span></span>
+</code></pre>
+<p>All we need is a dynamically applied CSS class depending on our <code>showFirst</code> variable, and a couple styles to modify the opacity for a nice fade in and out.</p>
+<h3 id="link-demos">Demos</h3>
+<p><a href="https://svelte.dev/repl/ffb7c5824fbc45319f132d9f2a6823d8?version=3.20.1" target="_blank" rel="noreferrer">🚀 See the full solution running at this REPL</a></p>
+<p><a href="https://codepen.io/bholmesdev/pen/abOeVMY" target="_blank" rel="noreferrer">😎 See the solution using vanilla JS with few modifications!</a></p>
+<h3 id="link-cool-solution-is-it-the-best-one-though">Cool solution! Is it the best one though?</h3>
+<p>So in the end, this code is ready-to-use in your project no problem. I have a few complaints with it though:</p>
+<ol>
+<li>We have to write out two image elements in our markup, which feels a little repetitive. This will get more noticeable as we add more classes, attributes, and inevitable container <code>&lt;div&gt;</code>s around each of them.</li>
+<li>We're using three state variables for one piece of functionality. This may not sound like a lot, but it hurts the readability of our solution a bit. I bet if you stumbled across this code in someone's repository and didn't have shiny GIFs to understand the algorithm, it would be pretty confusing on first sight.</li>
+</ol>
+<h2 id="link-using-a-svelte-y-approach">Using a Svelte-y approach</h2>
+<p>Now, let's start using some Svelte-specific magic. There's two approaches that I find cleaner than the image flip-flop: one that's pretty readable but a little longer, and another that's <em>super sleek</em> with a little added magic.</p>
+<h3 id="link-simple-array-mapping">Simple array mapping</h3>
+<p>So you're probably familiar with how to render a list of content to the page, whether that means a <code>.map</code>, an <code>*ngRepeat</code>, a <code>v-for</code>... you name it. You're also probably familiar with conditionally rendering elements with an if statement (<code>{condition &amp;&amp; ...}</code>, <code>*ngIf</code>, <code>v-if</code>, etc.). So what can we do with these powers combined?</p>
+<p>Well, make an image carousel of course! Let's check out this little chunk of code:</p>
+<pre class="language-html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span><span class="token punctuation">></span></span><span class="token script"><span class="token language-javascript">
+  <span class="token operator">...</span>
+  <span class="token keyword">let</span> currentCarouselIndex <span class="token operator">=</span> <span class="token number">0</span>
+  
+  <span class="token keyword">const</span> <span class="token function-variable function">next</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=></span>
+  	currentCarouselIndex <span class="token operator">=</span> <span class="token punctuation">(</span>currentCarouselIndex <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">%</span> carouselPhotos<span class="token punctuation">.</span>length
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">></span></span>
+
+{#each carouselPhotos as photo, index}
+	{#if index == currentCarouselIndex}
+		<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>img</span> <span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>{photo}</span> <span class="token punctuation">/></span></span>
+	{/if}
+{/each}
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>button</span> <span class="token attr-name"><span class="token namespace">on:</span>click</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>{next}</span><span class="token punctuation">></span></span>Next!<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>button</span><span class="token punctuation">></span></span>
+</code></pre>
+<p>Bam! Now we're iterating over all the photos in the carousel, then only showing the photo matching our current index. This means we only need one state variable total: <code>currentCarouselIndex</code>. Thankfully, I don't think I need to explain how Svelte handles for loops and if statements here. It's very readable on its own 😁</p>
+<p>But wait, <strong>what about our in-between state?</strong> In most frameworks, the &quot;if&quot; statement doesn't just change the opacity of a given element. Rather, it decides whether that element gets thrown on the page <em>at all.</em> So in this case, we'd obliterate the previous image in our carousel before it even has time to fade away! Hm...</p>
+<h3 id="link-transitions-to-the-rescue">Transitions to the rescue</h3>
+<p>Luckily, Svelte has a solution for this already included in the library: <a href="https://svelte.dev/docs#svelte_transition" target="_blank" rel="noreferrer"><strong>transition directives</strong></a> ✨</p>
+<p>At a basic level, here's how they work:</p>
+<ol>
+<li>When an element first gets thrown onto the page (based on some conditional if statement), it triggers a tiny JavaScript function that animates that element into view.</li>
+<li>When that element gets removed from the page (based on the same conditional), it triggers another tiny JavaScript function to animate that element out of view. Then, <em>only once this animation finishes</em>, the element gets removed from the document entirely.</li>
+</ol>
+<p>This lets us support the in-between state only when we need it! Here's a transition directive in action:</p>
+<pre class="language-html"><code class="language-html"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span><span class="token punctuation">></span></span><span class="token script"><span class="token language-javascript">
+	<span class="token keyword">import</span> <span class="token punctuation">{</span> fade <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'svelte/transition'</span>
+  <span class="token operator">...</span>
+</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">></span></span>
+
+{#each carouselPhotos as photo, index}
+	{#if index == currentCarouselIndex}
+		<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>img</span> <span class="token attr-name"><span class="token namespace">transition:</span>fade</span> <span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>{photo}</span> <span class="token punctuation">/></span></span>
+	{/if}
+{/each}
+</code></pre>
+<p>That's it! All we have to do is import the transition we want to use and apply it to our image. Then, let Svelte handle the JavaScript for us to add and remove elements at the appropriate time.</p>
+<p>Here's a new visualization of what's going on:</p>
+<p><img src="https://res.cloudinary.com/bog/image/upload/v1586276561/blog/bog-logo-showdev/rpimrrgvbhwhsv9btbee.gif" alt="Visual of swapping images with array mapping" loading="lazy"  /></p>
+<p>And yes, you can customize the transition to your heart's content. Svelte has <a href="https://svelte.dev/tutorial/transition" target="_blank" rel="noreferrer">a great tutorial series on everything you can do with transitions</a>. It's a little tricky to master, but you'll see that it's just as powerful as CSS transitions and keyframes!</p>
+<p>In the end, this is my favorite solution. But I bet we can do it with even fewer lines of code...</p>
+<h3 id="link-modification-the-array-key-trick">Modification: The array key trick</h3>
+<p><em><strong>Note:</strong> kudos to the incredible <a href="https://github.com/ArkaneMoose" target="_blank" rel="noreferrer">Rishov Sarkar</a> for finding this trick!</em></p>
+<p>Yes, our solution is nice and readable, but it feels kinda silly to iterate over <em>all</em> the photos in our carousel just to pick out 1 image to render. Ideally, we want to tell Svelte that each image is unique, and we should animate between them whenever the <code>src</code> changes.</p>
+<p>Luckily, there <em>is</em> such a way to uniquely identify each image: <strong>keys</strong></p>
+<p>We now know that transitions will trigger based on a conditional. But according to the <a href="https://svelte.dev/docs#animate_fn" target="_blank" rel="noreferrer">Svelte docs</a>: &quot;An animation is (also) triggered when the contents of a <a href="https://svelte.dev/docs#each" target="_blank" rel="noreferrer">keyed each block</a> are re-ordered.&quot; This is meant to help with, say, simple todo applications, where you might want to animate-in newly added list elements. As long as you apply a &quot;key&quot; to each element in the list (similar to the <code>key</code> prop in React), Svelte will know which elements are &quot;new&quot; between renders.</p>
+<p>So how can we apply this to our carousel? Let me throw the solution at you:</p>
+<pre class="language-html"><code class="language-html">... everything from the last solution
+
+{#each [carouselPhotos[currentCarouselIndex]] as photo (currentCarouselIndex)}
+		<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>img</span> <span class="token attr-name"><span class="token namespace">transition:</span>fade</span> <span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span>{photo}</span> <span class="token punctuation">/></span></span>
+{/each}
+</code></pre>
+<h3 id="link-woah-what-did-we-just-change">Woah! What did we just change?</h3>
+<ol>
+<li>Most importantly / weirdly, we're now iterating over an array with <em>only one element.</em> In this case, we're creating an array containing just the photo at our current index.</li>
+<li>We add <code>(currentCarouselIndex)</code> to the end of our <code>#each</code> statement to assign a &quot;key&quot; to each item in our array. We  know that the index is a unique identifier for items in our array of photos, so we can use it as the key for our image element. Since there's only one element in the array total, we can use our state variable as the unique indentifier.</li>
+<li>We remove our conditional statement, since Svelte already knows the image is unique based on our key!</li>
+</ol>
+<p>This feels a little strange on the surface, but it's actually quite simple. At the start, we have an array of one element: the first photo with a &quot;key&quot; of 0 (our current index). When we hit &quot;next,&quot; we transition from showing <code>[carouselPhotos[0] (key 0)]</code> to <code>[carouselPhotos[1] (key 1)]</code>. To us, it looks like we created an entirely new array. But from Svelte's perspective, it looks like we <em>removed</em> the first photo from our array (key 0) and <em>added</em> the second photo at the same time (key 1). So, it applies a fade out for what we &quot;removed&quot; and a fade in for what we &quot;added.&quot;</p>
+<p>So, we took our already short-and-sweet solution and made it even shorter / sweeter 🚀</p>
+<p><img src="https://res.cloudinary.com/bog/image/upload/v1586276568/blog/bog-logo-showdev/s2zkohnytpjiogdvbkbn.gif" alt="noice" loading="lazy"  /></p>
+<h3 id="link-demo">Demo</h3>
+<p>Feel free to edit the sandbox code to try out both solutions. Also take a peak at the &quot;JS output&quot; tab in the preview window, which shows you <em>exactly</em> what get code is running on the page. In under 200 lines, all of this magic is possible without any hidden libraries or imports 🔥</p>
+<p><a href="https://svelte.dev/repl/78bee610166a486a9304b9bfbeb77887?version=3.20.1" target="_blank" rel="noreferrer">🚀 See the full solution running at this REPL</a></p>
+<h2 id="link-thats-it">That's it!</h2>
+<p>In the end, all solutions presented here should be good enough for a production-ready site. But I hope this post taught you some neat tricks that Svelte offers out-of-the-box to create some pretty complex UIs in just a few lines. In the end, our &quot;key trick&quot; solution comes in at under 30 lines of HTML, CSS, and JS <em>combined!</em></p>
+<p>We also applied this solution in the real world with great success. Check out <a href="https://bitsofgood.org/" target="_blank" rel="noreferrer">the homepage</a> for the Bits of Good organization, partnering Georgia Tech students with nonprofits to build seriously-useful web apps.</p>
+<p><img src="https://res.cloudinary.com/bog/image/upload/v1586277201/blog/bog-logo-showdev/y6n4ssg0ihc0v9tfjaeh.gif" alt="Bits of Good homepage animation" loading="lazy"  /></p>
+<p>You can check out the <a href="https://github.com/GTBitsOfGood/bog-web/blob/master/src/components/landing/BigLogo.svelte" target="_blank" rel="noreferrer">source code for this component here</a>. The markup may be a little hard to read since we're nesting images in a big SVG vector, but you'll notice the &quot;key trick&quot; getting used the same way we just learned 😁</p>
+<h2 id="link-before-you-go-thanks-for-staying-strong">Before you go: thanks for staying strong</h2>
+<p>I'm writing this post in the thick of COVID-19 social distancing. You may be a student grieving over missed opportunities or graduations, a mother or father spending too much time with your kids, or a recently unemployed household trying to make ends meet.</p>
+<p>This is definitely a difficult time for all of us, but if there's any silver lining, it's all of these online learning opportunities at our disposal. So I'm glad you took the time to give this a read! If you've never used Svelte before, I hope it inspires you to pick it up 😁</p>
+</div><hr/><footer><p>Learn a little something? <strong><a href="https://twitter.com/intent/tweet?text=Woah,%20I%20learned%20so%20much%20from%20this!%20%22The%20power%20of%20SvelteJS:%20building%20an%20animated%20image%20carousel%20in%20%3C30%20lines%20of%20code%20%E2%9C%A8%22%20by%20@bholmesdev%20https://bholmes.dev/blog/making-an-animated-image-carousel-the-easy-way-with-svelte/" target="_blank" rel="noreferrer">Share this post</a> on Twitter!</strong></p><section class="about-the-author"><img src="../../assets/images/me.jpg" alt="Hand drawn portrait of Ben Holmes"/><div><address><a rel="author" href="../../index.html">Ben Holmes </a></address>is a web developer + UI designer by trade from Charleston SC. He's been tinkering with JavaScript and CSS since 2014, and has lead a <a href="https://hack4impact.org/dev-bootcamp">full stack bootcamp curriculum</a> used by universities across the country. Now, he's working fulltime at Peloton and teaching the world a bit of web whimsy in his spare time.</div></section></footer></article></main><footer><div class="content"><div class="newsletter"><h2>Woah, there's a newsletter too!</h2><form action="https://tinyletter.com/bholmesdev" method="post" target="_blank"><label for="email">Email</label><input id="email" type="email" name="email" placeholder="10xengineer@genius.club" required="required"/><p class="newsletter__never-spam">Don't worry, I won't spam you</p><button class="cta-link" type="submit">Yes please, more content<svg xmlns="http://www.w3.org/2000/svg" fill="#5f4b32" width="34" height="34" viewBox="0 0 512 512"><path d="M48 270.9l118.9 44.6L181.7 464 256 360l104 104L464 48 48 270.9zm294.9 126L260 313.4 374.9 152 193.6 289.8 124.9 265l291-156.2-73 288.1z"/></svg></svg></button></form></div><div class="socials"><div class="socials__links"><a href="https://dev.to/bholmesdev" target="_blank" rel="noreferrer" aria-label="Ben's DEV.to blog"><svg xmlns="http://www.w3.org/2000/svg" fill="#5f4b32" width="34" height="34" viewBox="0 0 34 34"><path d="M18.119,22.38a1.48,1.48,0,0,0-.881-.33H15.917v7.929h1.321a1.449,1.449,0,0,0,.881-.33,1.172,1.172,0,0,0,.44-.991V23.371a1.172,1.172,0,0,0-.44-.991ZM39.669,9H12.331A3.332,3.332,0,0,0,9,12.324V39.676A3.332,3.332,0,0,0,12.331,43H39.669A3.332,3.332,0,0,0,43,39.676V12.324A3.332,3.332,0,0,0,39.669,9ZM20.7,28.67a3.466,3.466,0,0,1-3.668,3.586H13.508V19.7H17.1a3.462,3.462,0,0,1,3.593,3.586L20.7,28.67Zm7.647-6.731H24.3v2.918h2.471V27.1H24.3v2.918h4.047v2.244H23.626a1.531,1.531,0,0,1-1.569-1.494v-9.5A1.531,1.531,0,0,1,23.55,19.7h4.8v2.237Zm7.86,8.755c-1,2.333-2.794,1.872-3.6,0L29.682,19.7h2.471l2.257,8.631L36.654,19.7h2.471L36.207,30.694Z" transform="translate(-9 -9)"/></svg></a><a href="https://twitter.com/bholmesdev" target="_blank" rel="noreferrer" aria-label="Ben's Twitter"><svg xmlns="http://www.w3.org/2000/svg" fill="#5f4b32" width="34" height="34" viewBox="0 0 34 34"><path d="M55.383,67.4a14.634,14.634,0,0,1-4.157,1.144,7.264,7.264,0,0,0,3.185-4.008,14.384,14.384,0,0,1-4.6,1.757,7.237,7.237,0,0,0-12.524,4.95,7.087,7.087,0,0,0,.187,1.652,20.514,20.514,0,0,1-14.924-7.574A7.253,7.253,0,0,0,24.8,75a7.07,7.07,0,0,1-3.29-.9v.09a7.245,7.245,0,0,0,5.809,7.1,7.287,7.287,0,0,1-1.907.254,6.829,6.829,0,0,1-1.361-.135,7.25,7.25,0,0,0,6.766,5.032,14.513,14.513,0,0,1-8.995,3.1,14.673,14.673,0,0,1-1.727-.1,20.234,20.234,0,0,0,11.081,3.275c13.331,0,20.613-11.043,20.613-20.621,0-.314-.007-.628-.022-.935A14.736,14.736,0,0,0,55.383,67.4Z" transform="translate(-20.1 -64)"/></svg></a><a href="https://github.com/holben888" target="_blank" rel="noreferrer" aria-label="Ben's GitHub"><svg xmlns="http://www.w3.org/2000/svg" fill="#5f4b32" width="34" height="34" viewBox="0 0 34 34"><path d="M10,115.987a18.6,18.6,0,0,0,.434,4.181,12.443,12.443,0,0,0,1.2,3.251,9.207,9.207,0,0,0,1.943,2.429,11.2,11.2,0,0,0,2.56,1.714,15.1,15.1,0,0,0,3.15,1.079,26,26,0,0,0,3.615.583q1.847.167,4.056.167,2.227,0,4.073-.167a26.227,26.227,0,0,0,3.626-.583,15.681,15.681,0,0,0,3.168-1.079,11.191,11.191,0,0,0,2.578-1.714,9.284,9.284,0,0,0,1.964-2.429,12.2,12.2,0,0,0,1.2-3.251A18.6,18.6,0,0,0,44,115.987a10.2,10.2,0,0,0-2.758-7.133,8.923,8.923,0,0,0,.274-.906,12.4,12.4,0,0,0,.232-1.447,8.1,8.1,0,0,0-.083-2.168,11.516,11.516,0,0,0-.708-2.512l-.25-.049a3.352,3.352,0,0,0-.874.024,9.708,9.708,0,0,0-1.412.3,12.073,12.073,0,0,0-2.078.864,24.135,24.135,0,0,0-2.685,1.6,26.284,26.284,0,0,0-6.668-.666,26.208,26.208,0,0,0-6.651.666,22.6,22.6,0,0,0-2.7-1.6,13.381,13.381,0,0,0-2.054-.864,8.05,8.05,0,0,0-1.429-.291,4.676,4.676,0,0,0-.84-.042,1.455,1.455,0,0,0-.274.059,11.462,11.462,0,0,0-.708,2.512,8.1,8.1,0,0,0-.083,2.168,12.664,12.664,0,0,0,.232,1.447,8.922,8.922,0,0,0,.274.906A10.223,10.223,0,0,0,10,115.987Zm4.174,4.174a5.879,5.879,0,0,1,2.179-4.389,4.334,4.334,0,0,1,1.513-.906,6.575,6.575,0,0,1,1.953-.347c.725-.028,1.422-.021,2.085.017s1.485.09,2.46.156,1.818.1,2.526.1,1.551-.031,2.529-.1,1.8-.118,2.46-.156,1.36-.045,2.085-.017a6.687,6.687,0,0,1,1.953.347,4.366,4.366,0,0,1,1.513.906,5.814,5.814,0,0,1,2.179,4.389,8.215,8.215,0,0,1-.357,2.536,6.367,6.367,0,0,1-.912,1.853,4.535,4.535,0,0,1-1.547,1.273,10.782,10.782,0,0,1-1.929.8,13.909,13.909,0,0,1-2.411.441c-.982.1-1.856.17-2.626.191s-1.749.035-2.935.035-2.165-.01-2.935-.035-1.644-.087-2.626-.191a13.648,13.648,0,0,1-2.411-.441,11.153,11.153,0,0,1-1.929-.8,4.535,4.535,0,0,1-1.547-1.273,6.414,6.414,0,0,1-.916-1.853A8.438,8.438,0,0,1,14.174,120.161Zm17.076-.333c0,1.759.951,3.188,2.127,3.188s2.127-1.426,2.127-3.188-.951-3.188-2.127-3.188S31.25,118.066,31.25,119.828Zm-12.75,0c0,1.759.951,3.188,2.127,3.188s2.127-1.426,2.127-3.188-.951-3.188-2.127-3.188S18.5,118.066,18.5,119.828Z" transform="translate(-10 -101.754)"/></svg></a></div><p>Follow along with <strong>Ben</strong> for the fun, for the whimsy, and for the love of building websites ♥ </p></div></div></footer></div></body>
+          <script src="../../__main.mjs" defer></script>
+          
+          
+<!-- Mirrored from bholmes.dev/blog/making-an-animated-image-carousel-the-easy-way-with-svelte/ by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 16 Mar 2022 05:58:13 GMT -->
+</html>
